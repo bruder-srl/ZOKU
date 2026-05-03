@@ -1519,6 +1519,122 @@ html.zoku-booting body{visibility:hidden}
   .dt-metrics{ grid-template-columns:1fr 1fr; }
   .dt-metric-val.big{ font-size:28px; }
 }
+
+/* ═══════════════════════════════════════════════
+   SHARE REPORT — modal + vista pública
+═══════════════════════════════════════════════ */
+.share-link-box{
+  display:flex;align-items:center;gap:8px;
+  background:var(--card3);border:1.5px solid var(--border);border-radius:12px;
+  padding:10px 12px;margin-bottom:14px;
+}
+.share-link-box input{
+  flex:1;background:transparent;border:none;outline:none;
+  font-family:'DM Mono',monospace;font-size:11px;color:var(--text);
+  min-width:0;
+}
+.share-link-box button{
+  flex-shrink:0;background:var(--blue);color:#fff;border:none;border-radius:8px;
+  padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+}
+.share-link-box button:active{transform:scale(0.96)}
+.share-meta{
+  text-align:center;font-size:11px;color:var(--text3);
+  margin:8px 0 12px;letter-spacing:0.04em;
+}
+.btn-share-obra{
+  width:100%;background:var(--card3);border:1.5px solid var(--border);
+  border-radius:12px;padding:11px;font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:700;color:var(--text2);cursor:pointer;
+  margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all 0.2s;
+}
+.btn-share-obra:active{transform:scale(0.98);background:var(--card2)}
+.btn-share-obra svg{width:14px;height:14px;flex-shrink:0}
+
+/* Vista pública */
+html.zoku-public, html.zoku-public body{overflow:auto !important}
+html.zoku-public body{visibility:visible !important}
+.public-wrap{
+  max-width:560px;margin:0 auto;padding:24px 18px 120px;
+  font-family:'DM Sans',sans-serif;color:var(--text);
+  min-height:100vh;background:var(--bg);
+}
+.public-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:18px;border-bottom:1px solid var(--border);margin-bottom:22px;
+}
+.public-brand{display:flex;align-items:center;gap:10px}
+.public-brand-logo{
+  width:36px;height:36px;border-radius:9px;background:#0A0A0B;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Sans',sans-serif;font-weight:800;color:#fff;font-size:14px;
+  letter-spacing:0.02em;
+}
+.public-empresa{font-size:13px;font-weight:700;color:var(--text)}
+.public-empresa-sub{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em}
+.public-validez{font-size:10px;color:var(--text3);text-align:right;letter-spacing:0.04em}
+.public-obra-title{font-size:22px;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px}
+.public-obra-meta{font-size:13px;color:var(--text2);margin-bottom:6px}
+.public-obra-badge{
+  display:inline-block;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:800;
+  text-transform:uppercase;letter-spacing:0.06em;
+}
+.public-section{
+  background:var(--card);border-radius:14px;padding:16px;margin-bottom:14px;
+  border:1px solid var(--border);
+}
+.public-section-title{
+  font-size:10px;font-weight:800;color:var(--text3);
+  text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;
+}
+.public-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.public-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.public-num-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+.public-num-val{font-size:14px;font-weight:800;font-family:'DM Mono',monospace}
+.public-esc-card{border-radius:12px;padding:12px}
+.public-esc-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.public-esc-val{font-size:18px;font-weight:800;font-family:'DM Mono',monospace}
+.public-iva-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
+.public-iva-row .lbl{color:var(--text2)}
+.public-iva-row .val{font-family:'DM Mono',monospace;font-weight:700}
+.public-iva-result{
+  margin-top:10px;padding:10px 12px;border-radius:10px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.public-mov-row{
+  display:grid;grid-template-columns:1fr auto;gap:10px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.public-mov-row:last-child{border-bottom:none}
+.public-mov-tipo{font-size:12px;font-weight:700}
+.public-mov-meta{font-size:10px;color:var(--text3);margin-top:2px}
+.public-mov-monto{font-family:'DM Mono',monospace;font-weight:800;font-size:13px}
+.public-cta{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--bg);border-top:1px solid var(--border);
+  padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  z-index:100;
+}
+.public-cta-text{font-size:12px;font-weight:600;color:var(--text2);line-height:1.3}
+.public-cta-btn{
+  background:var(--blue);color:#fff;border:none;border-radius:10px;
+  padding:10px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:800;
+  text-decoration:none;white-space:nowrap;cursor:pointer;
+}
+.public-error{
+  text-align:center;padding:60px 24px;max-width:400px;margin:0 auto;
+}
+.public-error-ico{font-size:42px;margin-bottom:14px}
+.public-error-title{font-size:20px;font-weight:800;margin-bottom:8px}
+.public-error-sub{font-size:14px;color:var(--text2);line-height:1.5}
+@media (max-width:480px){
+  .public-grid-4{grid-template-columns:repeat(2,1fr)}
+  .public-cta{flex-direction:column;gap:10px;text-align:center}
+  .public-cta-btn{width:100%;text-align:center}
+}
 </style>
 
 
@@ -1796,7 +1912,7 @@ html.zoku-booting body{visibility:hidden}
     <div class="view" id="view-obras">
       <div class="topbar">
         <div class="sec-title" style="font-size:20px;font-weight:800;letter-spacing:-0.03em">Obras</div>
-        <div class="sec-more" onclick="openModal('obra')">+ Activar/div>
+        <div class="sec-more" onclick="openModal('obra')">+ Activar</div>
       </div>
       <div id="obras-list"></div>
     </div>
@@ -1911,9 +2027,14 @@ html.zoku-booting body{visibility:hidden}
         <option>Cobro cliente</option><option>Retención SET</option><option>Otros</option>
       </select>
     </div>
-    <div class="fg">
-      <label>Cuenta bancaria</label>
+    <div class="fg" id="fg-banco">
+      <label id="lbl-banco">Cuenta bancaria</label>
       <select class="fi" id="f-banco"></select>
+    </div>
+    <div class="fg" id="fg-banco-destino" style="display:none">
+      <label>Cuenta destino</label>
+      <select class="fi" id="f-banco-destino"></select>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">El monto se descuenta del banco origen y acredita en el destino. La transferencia no afecta la utilidad de obra.</div>
     </div>
     <div class="fg">
       <label>Descripción (opcional)</label>
@@ -1993,6 +2114,45 @@ html.zoku-booting body{visibility:hidden}
   </div>
 </div>
 
+<!-- ═══ MODAL COMPARTIR REPORTE ═══ -->
+<div class="overlay" id="modal-share" onclick="closeModalOut(event,'modal-share')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <div class="modal-title" style="margin-bottom:0">Reporte listo</div>
+      <button onclick="closeModal('modal-share')" style="width:32px;height:32px;border-radius:50%;background:var(--card2);border:1.5px solid var(--border);font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-family:'DM Sans',sans-serif">✕</button>
+    </div>
+    <div id="share-obra-info" style="font-size:13px;color:var(--text2);margin-bottom:14px;font-weight:600"></div>
+    <div class="share-link-box">
+      <input type="text" id="share-link-input" readonly/>
+      <button onclick="copiarLinkShare()">Copiar</button>
+    </div>
+    <div class="share-meta">Válido por 7 días</div>
+    <button class="btn-primary" onclick="copiarLinkShare()">✓ Copiar link</button>
+    <button class="btn-secondary" onclick="abrirWhatsappShare()" style="background:#25D366;color:#fff;border:none">WhatsApp →</button>
+    <button class="btn-secondary" onclick="closeModal('modal-share')">Cancelar</button>
+  </div>
+</div>
+
+<!-- ═══ MODAL CONFIRMACIÓN GENÉRICO (sobregiro / confirmaciones críticas) ═══ -->
+<!-- FIX 3.6 #15: helper reusable openConfirmModal. Usado por pagarAhora y     -->
+<!-- transferencias para advertir saldo negativo SIN bloquear (sobregiro PY). -->
+<div class="overlay" id="modal-confirm" onclick="closeModalOut(event,'modal-confirm')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="modal-title" id="modal-confirm-title" style="margin-bottom:0">Confirmar</div>
+      <button onclick="closeModal('modal-confirm')" style="width:32px;height:32px;border-radius:50%;background:var(--card2);border:1.5px solid var(--border);font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-family:'DM Sans',sans-serif">✕</button>
+    </div>
+    <div id="modal-confirm-msg" style="font-size:14px;color:var(--text);line-height:1.5;margin-bottom:18px;font-weight:500"></div>
+    <button class="btn-primary" id="modal-confirm-ok" onclick="_confirmModalOk()">Continuar</button>
+    <button class="btn-secondary" onclick="closeModal('modal-confirm')">Cancelar</button>
+  </div>
+</div>
+
+<!-- ═══ VISTA PÚBLICA DE REPORTE (oculto por default; activado por ?reporte=) ═══ -->
+<div id="public-view" style="display:none"></div>
+
 <div class="toast" id="toast"></div>
 <div style="text-align:center;padding:8px 0 16px;font-size:10px;color:var(--text3);font-weight:500;letter-spacing:0.06em;text-transform:uppercase;opacity:0.6">Powered by ZOKU</div>
 
@@ -2014,6 +2174,35 @@ const COBROS_T = ["Cobro","Depósito","Movimiento bancario"];
 const GASTOS_T = ["Gasto","Pago proveedor","Mano de obra","Transferencia","Retención SET"];
 const isCobro = t => ["Cobro","Depósito"].includes(t);
 const isGasto = t => ["Gasto","Pago proveedor","Mano de obra","Transferencia","Retención SET"].includes(t);
+// ════════════════════════════════════════════════════════════
+//  GENERACIÓN DE IDs — UUID v4 (RFC 4122)
+//  Source of truth para todos los movimientos. Idempotente.
+//  Fallback para navegadores < 2022 (Safari < 15.4).
+// ════════════════════════════════════════════════════════════
+function _genUUID(){
+  // Path 1: API nativa (Chrome 92+, Safari 15.4+, Firefox 95+)
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"){
+    return crypto.randomUUID();
+  }
+  // Path 2: fallback con crypto.getRandomValues (todos los navegadores modernos)
+  if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function"){
+    const b = new Uint8Array(16);
+    crypto.getRandomValues(b);
+    b[6] = (b[6] & 0x0f) | 0x40; // versión 4
+    b[8] = (b[8] & 0x3f) | 0x80; // variant RFC 4122
+    const h = Array.from(b, x => x.toString(16).padStart(2,"0"));
+    return h[0]+h[1]+h[2]+h[3]+"-"+h[4]+h[5]+"-"+h[6]+h[7]+"-"+h[8]+h[9]+"-"+h[10]+h[11]+h[12]+h[13]+h[14]+h[15];
+  }
+  // Path 3: último recurso (Math.random — débil pero funcional offline)
+  console.warn("_genUUID: usando Math.random fallback. Navegador muy antiguo.");
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+    const r = Math.random()*16|0, v = c==="x" ? r : (r&0x3|0x8);
+    return v.toString(16);
+  });
+}
+// Regex de validación UUID v4 (laxo: acepta cualquier UUID válido)
+const _RE_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const COLORES = ["#2B6ED4","#00C896","#F59E0B","#FF4D4D","#AF52DE","#FF9500","#5AC8FA","#00C8C8","#FF6B9D","#A8E6CF"];
 const ICONOS = {
   "Materiales":"🧱","Mano de Obra":"👷","Subcontratistas":"🏗️",
@@ -2039,7 +2228,7 @@ let state = {
   moneda_principal: "GS",
   pendientesSync:   [],
   lastCloudSync:    "",
-  schemaVersion:    1,
+  schemaVersion:    2,
   subscription:     null,
 };
 
@@ -2083,9 +2272,58 @@ function loadState(){
         state.schemaVersion = 1;
         console.info("ZOKU: migración schema v0 → v1 completada");
       }
+      if(state.schemaVersion < 2){
+        // v1 → v2: migrar IDs de movimientos a UUID v4
+        // Cualquier ID que no matchee formato UUID se reasigna.
+        // pendientesSync se vacía: cualquier mov en cola con ID viejo es basura
+        // (ya fue sincronizado o nunca lo será correctamente).
+        let migrados = 0;
+        state.movs.forEach(m => {
+          if(typeof m.id !== "string" || !_RE_UUID.test(m.id)){
+            m.id = _genUUID();
+            migrados++;
+          }
+        });
+        // Limpiar cola pendiente: IDs viejos no son rastreables en GAS
+        if(state.pendientesSync && state.pendientesSync.length){
+          console.warn("ZOKU: descartando "+state.pendientesSync.length+" movs en cola pendiente con IDs legacy");
+          state.pendientesSync = [];
+        }
+        state.schemaVersion = 2;
+        console.info("ZOKU: migración schema v1 → v2 completada — "+migrados+" IDs migrados a UUID v4");
+        // Persistir inmediatamente para no repetir migración en próxima carga
+        try {
+          const key = (appMode === 'DEMO') ? SK_DEMO : SK;
+          localStorage.setItem(key, JSON.stringify(state));
+        } catch(e){ console.error("Error persistiendo migración v2:", e); }
+      }
       // Migración defensiva subscription
       if(!state.subscription) startTrial();
-    }catch(e){ console.error("loadState error:", e); }
+    }catch(e){
+      // FIX 3.6 #12: cuarentena. Antes: log silencioso → siguiente saveState
+      // sobrescribía el JSON corrupto con defaults → PÉRDIDA TOTAL DE DATOS.
+      // Ahora: backup del raw, marca cuarentena, alerta visible al usuario.
+      console.error("loadState error — JSON corrupto detectado:", e);
+      try {
+        const stamp = new Date().toISOString().replace(/[:.]/g,"-");
+        const corruptKey = SK + "_CORRUPT_" + stamp;
+        localStorage.setItem(corruptKey, saved);
+        state._jsonCorruptDetected = corruptKey;
+        // Alerta diferida — DOM aún no necesariamente listo en este punto
+        setTimeout(function(){
+          if(typeof showToast === "function"){
+            showToast("⚠️ Datos corruptos detectados — backup en "+corruptKey,"err");
+          } else {
+            alert("ZOKU: detectó datos corruptos en localStorage.\nBackup guardado en clave: "+corruptKey+"\nContactá soporte antes de seguir operando.");
+          }
+        }, 500);
+      } catch(quarErr){
+        console.error("Cuarentena fallida:", quarErr);
+      }
+      // No relanzar — startTrial inicializa subscription y la app arranca limpia.
+      // El raw original sigue accesible vía la clave _CORRUPT_ para recuperación manual.
+      startTrial();
+    }
   } else {
     // Primera instalación — iniciar trial automáticamente
     startTrial();
@@ -2156,7 +2394,7 @@ function checkAccess(){
 
   fetch(url, {
     method:  "POST",
-    headers: {"Content-Type":"application/json"},
+    headers: {"Content-Type":"text/plain;charset=utf-8"},
     body:    JSON.stringify(payload)
   })
   .then(r => r.ok ? r.json() : Promise.reject("HTTP "+r.status))
@@ -2350,8 +2588,9 @@ function parseMonto(val){
 //  CÁLCULOS
 // ════════════════════════════════════════════════════════════
 function calcTotales(){
-  const cobrado = state.movs.filter(m=>isCobro(m.tipo)&&!m.eliminado).reduce((s,m)=>s+m.monto,0);
-  const gastos  = state.movs.filter(m=>isGasto(m.tipo)&&!m.eliminado).reduce((s,m)=>s+m.monto,0);
+  // Excluir transferencias interbancarias: no son ingreso ni egreso real
+  const cobrado = state.movs.filter(m=>isCobro(m.tipo)&&!m.eliminado&&!m.esTransferencia).reduce((s,m)=>s+m.monto,0);
+  const gastos  = state.movs.filter(m=>isGasto(m.tipo)&&!m.eliminado&&!m.esTransferencia).reduce((s,m)=>s+m.monto,0);
   return {cobrado, gastos, neto:cobrado-gastos};
 }
 function calcMes(){
@@ -2363,11 +2602,14 @@ function calcMes(){
 }
 function calcCats(lista){
   const map={};
-  lista.filter(m=>isGasto(m.tipo)).forEach(m=>{ map[m.cat]=(map[m.cat]||0)+m.monto; });
+  lista.filter(m=>isGasto(m.tipo)&&!m.esTransferencia).forEach(m=>{ map[m.cat]=(map[m.cat]||0)+m.monto; });
   return Object.entries(map).sort((a,b)=>b[1]-a[1]);
 }
 function calcObra(id){
-  const om = state.movs.filter(m=>m.obra && m.obra.startsWith(id) && !m.eliminado);
+  // Las transferencias interbancarias quedan en obra "General" y se excluyen
+  // FIX 3.6 #10: parche defensivo contra colisión de prefijos OB-1 vs OB-10.
+  // Match exacto o id seguido de espacio (formato real: "OB-001 Vivienda Rodríguez")
+  const om = state.movs.filter(m=>m.obra && (m.obra===id || m.obra.startsWith(id+" ")) && !m.eliminado && !m.esTransferencia);
   const cobrado         = om.filter(m=>isCobro(m.tipo)).reduce((s,m)=>s+m.monto,0);
   const gastosPagados   = om.filter(m=>isGasto(m.tipo)&&m.estadoPago!=="PENDIENTE").reduce((s,m)=>s+m.monto,0);
   const gastosPendiente = om.filter(m=>isGasto(m.tipo)&&m.estadoPago==="PENDIENTE").reduce((s,m)=>s+m.monto,0);
@@ -2533,19 +2775,22 @@ function renderGastosBars(){
 //  MOVIMIENTOS
 // ════════════════════════════════════════════════════════════
 function movHTML(m, showActions=false){
-  const esC = isCobro(m.tipo);
+  const esC = isCobro(m.tipo) || (m.esTransferencia && m.transferLado === "IN");
+  const transferTag = m.esTransferencia
+    ? `<span style="font-size:10px;color:var(--blue2);background:var(--blue-pale);padding:1px 6px;border-radius:6px;margin-left:6px;font-weight:600">🔗 ${m.transferLado||"TRANSFER"}</span>`
+    : "";
   return `
     <div class="mov-item" id="mov-${m.id}">
       <div class="mov-ico" style="background:${esC?"var(--green-pale)":"var(--red-pale)"}">
-        ${ICONOS[m.cat]||"📦"}
+        ${m.esTransferencia ? "🔄" : (ICONOS[m.cat]||"📦")}
       </div>
       <div class="mov-body">
-        <div class="mov-nombre">${m.desc||m.cat}</div>
+        <div class="mov-nombre">${m.desc||m.cat}${transferTag}</div>
         <div class="mov-meta">${m.tipo} · ${m.obra||"Sin obra"}${m.banco?" · "+getBancoNombre(m.banco):""}${m.estadoPago==="PENDIENTE"?' <span class="cxp-badge">PENDIENTE</span>':""}</div>
         ${m.notas?`<div style="font-size:11px;color:var(--text3);margin-top:2px;font-style:italic">${m.notas}</div>`:""}
         ${showActions?`<div class="mov-actions">
-          <button class="mov-btn mov-btn-edit" onclick="editMov(${m.id})">Editar</button>
-          <button class="mov-btn mov-btn-del" onclick="deleteMov(${m.id})">Eliminar</button>
+          <button class="mov-btn mov-btn-edit" onclick="editMov('${m.id}')">Editar</button>
+          <button class="mov-btn mov-btn-del" onclick="deleteMov('${m.id}')">Eliminar</button>
         </div>`:""}
       </div>
       <div class="mov-right">
@@ -2603,7 +2848,7 @@ function renderAllMovs(){
   const filtro = filtrosEl?filtrosEl.dataset.filtro||"todos":"todos";
   const lista = filtro==="todos"
     ? sortMovs(state.movs)
-    : sortMovs(state.movs.filter(m=>m.obra&&m.obra.startsWith(filtro)));
+    : sortMovs(state.movs.filter(m=>m.obra&&(m.obra===filtro||m.obra.startsWith(filtro+" "))));
 
   if(lista.length===0){
     el.innerHTML='<div class="empty" style="padding:50px 20px"><div class="empty-ico">📋</div><div class="empty-txt">Sin movimientos</div></div>';
@@ -2657,9 +2902,9 @@ function renderObras(){
     const pct = o.contrato>0?Math.min(c.cobrado/o.contrato,1):0;
     const pctG = o.contrato>0?Math.min(c.gastos/o.contrato,1):0;
     const badge = o.estado==="Finalizada"?"badge-fin":o.estado==="Activa"?"badge-act":"badge-pau";
-    const tasaIVA = o.iva_pct?parseInt(o.iva_pct)/100:0.10;
-    const iva_debito  = Math.round(c.cobrado/(1+tasaIVA)*tasaIVA);
-    const iva_credito = Math.round(c.gastos/1.10*0.10);
+    const tasaIVA = (o.iva_pct !== undefined && o.iva_pct !== null && o.iva_pct !== "") ? parseFloat(o.iva_pct)/100 : 0.10;
+    const iva_debito  = tasaIVA>0 ? Math.round(c.cobrado/(1+tasaIVA)*tasaIVA) : 0;
+    const iva_credito = tasaIVA>0 ? Math.round(c.gastos/(1+tasaIVA)*tasaIVA) : 0;
     const credito_preobra = o.credito_preobra||0;
     const pos_iva = iva_debito - iva_credito - credito_preobra;
     const retenciones = o.etapas?o.etapas.reduce((s,e)=>s+(e.ret||0),0):0;
@@ -2717,7 +2962,7 @@ function renderObras(){
       </div>
 
       <div class="iva-box">
-        <div class="iva-title">Posición IVA (IVA ${o.iva_pct||10}%)</div>
+        <div class="iva-title">Posición IVA (IVA ${(o.iva_pct!==undefined&&o.iva_pct!==null&&o.iva_pct!=="")?o.iva_pct:10}%)</div>
         <div class="iva-row"><span class="iva-label">IVA Débito (cobrado)</span><span class="iva-val" style="color:var(--red)">${fmtF(iva_debito)}</span></div>
         <div class="iva-row"><span class="iva-label">IVA Crédito (compras)</span><span class="iva-val" style="color:var(--green)">${fmtF(iva_credito)}</span></div>
         ${credito_preobra>0?`<div class="iva-row"><span class="iva-label">Crédito pre-obra</span><span class="iva-val" style="color:var(--green)">${fmtF(credito_preobra)}</span></div>`:""}
@@ -2746,6 +2991,11 @@ function renderObras(){
 
 
       ${renderMetricasObra(o)}
+
+      <button class="btn-share-obra" onclick="compartirObra('${o.id}')" aria-label="Compartir estado de ${o.id}">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        Compartir estado
+      </button>
 
     </div>`;
   }).join("");
@@ -2978,7 +3228,7 @@ function renderCXP(){
 
     <div id="cxp-lista">
     ${pendientes.map(m=>{
-      const obra = state.obras.find(o=>m.obra&&m.obra.startsWith(o.id));
+      const obra = state.obras.find(o=>m.obra&&(m.obra===o.id||m.obra.startsWith(o.id+" ")));
       return `
       <div class="section" style="margin-bottom:10px" id="cxp-item-${m.id}">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
@@ -3016,20 +3266,49 @@ function pagarAhora(movId){
   const idx = state.movs.findIndex(m=>m.id==movId);
   if(idx<0) return;
 
-  // Actualizar estado del movimiento — Regla 6
-  state.movs[idx] = {
-    ...state.movs[idx],
-    estadoPago: "PAGADO",
-    banco:      bancoSel.value,
-    bancoId:    bancoSel.value,
-    editadoEl:  new Date().toISOString()
+  const movRef = state.movs[idx];
+  const bancoId = bancoSel.value;
+
+  // FIX 3.6 #15: aviso de sobregiro (no bloqueante, común en líneas
+  // de crédito PY). Se compara contra calcSaldoBanco actual; el saldo
+  // proyectado descontando otros pendientes queda como deuda para Chat 5.
+  const banco = (state.bancos||[]).find(b=>b.id===bancoId);
+  const saldoActual = banco ? calcSaldoBanco(banco) : 0;
+  const monto = movRef.monto || 0;
+
+  const ejecutarPago = ()=>{
+    // FIX 3.6 #6: agregar fechaPago retrocompatible.
+    // m.fecha se mantiene como fecha de devengo (factura/contrato) — crítico para IRE.
+    // m.fechaPago captura la fecha real de salida de caja para flujo financiero.
+    // Reportes deben usar fechaPago||fecha. Refactor completo en Chat 3.7+.
+    const hoy = today();
+    state.movs[idx] = {
+      ...state.movs[idx],
+      estadoPago: "PAGADO",
+      banco:      bancoId,
+      bancoId:    bancoId,
+      fechaPago:  hoy,
+      editadoEl:  new Date().toISOString()
+    };
+    saveState();
+    renderCXP();
+    render();
+    showToast("✓ Marcado como pagado","ok");
+    syncSheets(state.movs[idx]);
   };
 
-  saveState();
-  renderCXP();
-  render();
-  showToast("✓ Marcado como pagado","ok");
-  syncSheets(state.movs[idx]);
+  if(banco && monto > saldoActual){
+    const negativo = monto - saldoActual;
+    openConfirmModal({
+      title:    "Cuenta en sobregiro",
+      message:  "Esta operación dejará la cuenta "+(banco.nombre||"seleccionada")+
+                " con saldo negativo de "+fmtMon(negativo)+". ¿Deseas continuar?",
+      okLabel:  "Sí, continuar",
+      onConfirm: ejecutarPago
+    });
+    return;
+  }
+  ejecutarPago();
 }
 
 function renderAjustes(){
@@ -3310,7 +3589,7 @@ function renderAdminDatos(){
     <div class="papelera-count">${eliminados.length} movimiento${eliminados.length!==1?"s":""} eliminado${eliminados.length!==1?"s":""}</div>
     ${eliminados.map(m=>{
       const esC = isCobro(m.tipo);
-      const obra = state.obras.find(o=>m.obra&&m.obra.startsWith(o.id));
+      const obra = state.obras.find(o=>m.obra&&(m.obra===o.id||m.obra.startsWith(o.id+" ")));
       return `
       <div class="papelera-item" id="pap-${m.id}">
         <div class="papelera-header">
@@ -3331,8 +3610,8 @@ function renderAdminDatos(){
           <div>👤 Usuario: ${m.usuarioId||"Admin"}</div>
         </div>
         <div class="papelera-actions">
-          <button class="btn-restaurar" onclick="restaurarMovimiento(${m.id})">↩ Restaurar</button>
-          <button class="btn-borrar-def" onclick="borrarDefinitivo(${m.id})">🗑 Borrar definitivo</button>
+          <button class="btn-restaurar" onclick="restaurarMovimiento('${m.id}')">↩ Restaurar</button>
+          <button class="btn-borrar-def" onclick="borrarDefinitivo('${m.id}')">🗑 Borrar definitivo</button>
         </div>
       </div>`;
     }).join("")}
@@ -3397,12 +3676,47 @@ function openModal(tipo){
     document.getElementById("f-fecha").value=today();
     const notasEl = document.getElementById("f-notas");
     if(notasEl) notasEl.value="";
+    // Reset visual al estado por defecto (Gasto seleccionado, sin destino)
+    tipoSel = "Gasto";
+    document.querySelectorAll(".tipo-btn").forEach(b=>{
+      b.classList.toggle("sel", b.dataset.t === "Gasto");
+    });
+    const fgDestino = document.getElementById("fg-banco-destino");
+    if(fgDestino) fgDestino.style.display = "none";
+    const lblBanco = document.getElementById("lbl-banco");
+    if(lblBanco) lblBanco.textContent = "Cuenta bancaria";
+    const sBancoDest = document.getElementById("f-banco-destino");
+    if(sBancoDest) sBancoDest.value = "";
     initPagoSwitch();
     setTimeout(()=>document.getElementById("f-monto").focus(),400);
   }
 }
 function closeModal(id){ document.getElementById(id).classList.remove("open"); }
 function closeModalOut(e,id){ if(e.target===document.getElementById(id)) closeModal(id); }
+
+// ════════════════════════════════════════════════════════════
+//  FIX 3.6 #15 — MODAL DE CONFIRMACIÓN REUSABLE
+//  Usado por pagarAhora y transferencias para advertir sobregiro
+//  SIN bloquear la operación (común en líneas de crédito PY).
+//  Patrón: openConfirmModal({title, message, onConfirm}).
+//  El callback se ejecuta solo si el usuario hace click en "Continuar".
+//  Si cancela o cierra el modal, no pasa nada (no side effects).
+// ════════════════════════════════════════════════════════════
+let _confirmModalCallback = null;
+function openConfirmModal({title, message, onConfirm, okLabel}){
+  document.getElementById("modal-confirm-title").textContent = title || "Confirmar";
+  document.getElementById("modal-confirm-msg").textContent   = message || "";
+  const okBtn = document.getElementById("modal-confirm-ok");
+  if(okBtn) okBtn.textContent = okLabel || "Continuar";
+  _confirmModalCallback = (typeof onConfirm === "function") ? onConfirm : null;
+  document.getElementById("modal-confirm").classList.add("open");
+}
+function _confirmModalOk(){
+  const cb = _confirmModalCallback;
+  _confirmModalCallback = null;
+  closeModal("modal-confirm");
+  if(cb) try { cb(); } catch(e){ console.error("openConfirmModal callback error:", e); }
+}
 
 function selTipo(el){
   document.querySelectorAll(".tipo-btn").forEach(b=>b.classList.remove("sel"));
@@ -3413,6 +3727,17 @@ function selTipo(el){
   mi.className = "fi fi-monto"+(esC?"":" gasto");
   mi.style.color = esC?"var(--green)":"var(--red)";
 
+  // Transferencia interbancaria: mostrar segundo banco y relabel
+  const fgDestino = document.getElementById("fg-banco-destino");
+  const lblBanco  = document.getElementById("lbl-banco");
+  if(tipoSel === "Transferencia"){
+    if(fgDestino) fgDestino.style.display = "block";
+    if(lblBanco)  lblBanco.textContent = "Cuenta origen";
+  } else {
+    if(fgDestino) fgDestino.style.display = "none";
+    if(lblBanco)  lblBanco.textContent = "Cuenta bancaria";
+  }
+
   // Mostrar switch de pago solo para gastos
   initPagoSwitch();
 }
@@ -3420,6 +3745,7 @@ function selTipo(el){
 function populateSelects(){
   const sObra = document.getElementById("f-obra");
   const sBanco = document.getElementById("f-banco");
+  const sBancoDest = document.getElementById("f-banco-destino");
   if(sObra){
     sObra.innerHTML = [
       '<option value="General">Sin obra · General</option>',
@@ -3429,6 +3755,12 @@ function populateSelects(){
   if(sBanco){
     sBanco.innerHTML = [
       '<option value="">Sin asignar</option>',
+      ...state.bancos.map(b=>`<option value="${b.id}">${b.nombre}</option>`)
+    ].join("");
+  }
+  if(sBancoDest){
+    sBancoDest.innerHTML = [
+      '<option value="">Seleccionar destino...</option>',
       ...state.bancos.map(b=>`<option value="${b.id}">${b.nombre}</option>`)
     ].join("");
   }
@@ -3442,13 +3774,119 @@ function guardarMov(){
   const monto = parseMonto(document.getElementById("f-monto").value);
   if(monto<=0){ document.getElementById("f-monto").focus(); return; }
 
-  const editId = parseInt(document.getElementById("edit-mov-id").value)||null;
+  const editId = document.getElementById("edit-mov-id").value || null;
+
+  // ── RAMA TRANSFERENCIA INTERBANCARIA ───────────────────────
+  // Genera dos movs atados por refId. Origen: Transferencia (egreso).
+  // Destino: Movimiento bancario (ingreso espejo). Flag esTransferencia
+  // excluye ambos del cálculo de utilidad de obra (ver calcObra/calcTotales).
+  // No se puede editar una transferencia legacy en este modal — el flujo
+  // crea un par nuevo. Editar transferencias existentes se hace borrando
+  // y recreando (advertencia visual mostrada en la lista).
+  if(tipoSel === "Transferencia" && !editId){
+    const bancoOrigen  = document.getElementById("f-banco").value;
+    const bancoDestino = document.getElementById("f-banco-destino").value;
+    if(!bancoOrigen || !bancoDestino){
+      showToast("Seleccioná banco origen y destino","err");
+      return;
+    }
+    if(bancoOrigen === bancoDestino){
+      showToast("Origen y destino no pueden ser el mismo banco","err");
+      return;
+    }
+    const refId = _genUUID();
+    const ahora = new Date().toISOString();
+    const fecha = document.getElementById("f-fecha").value||today();
+    const desc  = document.getElementById("f-desc").value.trim() || "Transferencia interbancaria";
+    const notas = document.getElementById("f-notas")?.value.trim()||"";
+    const usuarioId = state.empresa?.usuario||"Admin";
+
+    const ejecutarTransferencia = ()=>{
+      const movOut = {
+        id:              refId+"-OUT",
+        refId,
+        esTransferencia: true,
+        transferLado:    "OUT",
+        fecha,
+        tipo:            "Transferencia",
+        obra:            "General",
+        obraId:          "General",
+        cat:             "Movimiento bancario",
+        banco:           bancoOrigen,
+        bancoId:         bancoOrigen,
+        desc:            "→ "+desc,
+        notas,
+        monto,
+        forma:           "Transferencia",
+        estadoPago:      "PAGADO",
+        eliminado:       false,
+        createdAt:       ahora,
+        usuarioId,
+      };
+      const movIn = {
+        id:              refId+"-IN",
+        refId,
+        esTransferencia: true,
+        transferLado:    "IN",
+        fecha,
+        tipo:            "Movimiento bancario",
+        obra:            "General",
+        obraId:          "General",
+        cat:             "Movimiento bancario",
+        banco:           bancoDestino,
+        bancoId:         bancoDestino,
+        desc:            "← "+desc,
+        notas,
+        monto,
+        forma:           "Transferencia",
+        estadoPago:      "PAGADO",
+        eliminado:       false,
+        createdAt:       ahora,
+        usuarioId,
+      };
+      state.movs.push(movOut, movIn);
+      saveState();
+      document.getElementById("f-monto").value="";
+      document.getElementById("f-desc").value="";
+      closeModal("modal-mov");
+      if(typeof _limpiarEmptyStateCard==="function") _limpiarEmptyStateCard();
+      render();
+      showToast("✓ Transferencia registrada","ok");
+      syncSheets(movOut);
+      syncSheets(movIn);
+    };
+
+    // FIX 3.6 #15: aviso de sobregiro en banco origen (no bloqueante).
+    const bancoOrig = (state.bancos||[]).find(b=>b.id===bancoOrigen);
+    const saldoOrig = bancoOrig ? calcSaldoBanco(bancoOrig) : 0;
+    if(bancoOrig && monto > saldoOrig){
+      const negativo = monto - saldoOrig;
+      openConfirmModal({
+        title:    "Cuenta en sobregiro",
+        message:  "Esta operación dejará la cuenta "+(bancoOrig.nombre||"origen")+
+                  " con saldo negativo de "+fmtMon(negativo)+". ¿Deseas continuar?",
+        okLabel:  "Sí, continuar",
+        onConfirm: ejecutarTransferencia
+      });
+      return;
+    }
+    ejecutarTransferencia();
+    return;
+  }
+  // Si está en modo edición y el tipo es Transferencia, bloquear edición
+  // (la edición de un solo lado rompería la simetría del par)
+  if(tipoSel === "Transferencia" && editId){
+    showToast("Las transferencias no se editan — eliminá y recreá","err");
+    return;
+  }
+
+  // ── RAMA NORMAL (gastos, cobros, mov. bancario, etc.) ──────
   const esGastoTipo = ["Gasto","Pago proveedor","Mano de obra"].includes(tipoSel);
   const estadoPago  = esGastoTipo ? (pagadoAhora ? "PAGADO" : "PENDIENTE") : "PAGADO";
   const ahora       = new Date().toISOString();
 
   const mov = {
-    id:         editId||(Date.now() + Math.random()),
+    id:         editId || _genUUID(),
     fecha:      document.getElementById("f-fecha").value||today(),
     tipo:       tipoSel,
     obra:       document.getElementById("f-obra").value,
@@ -3516,6 +3954,23 @@ function deleteMov(id){
   if(!_checkWriteAccess()) return;
   const idx = state.movs.findIndex(m=>m.id===id);
   if(idx<0) return;
+  const m = state.movs[idx];
+
+  // Si es transferencia: eliminar el par completo (ambos lados)
+  if(m.esTransferencia && m.refId){
+    const ahora = new Date().toISOString();
+    state.movs.forEach((x, i) => {
+      if(x.refId === m.refId){
+        state.movs[i] = {...x, eliminado:true, editadoEl:ahora};
+      }
+    });
+    guardarSilencioso();
+    saveState();
+    render();
+    showToast("Transferencia eliminada (par completo)","err");
+    return;
+  }
+
   state.movs[idx] = {...state.movs[idx], eliminado:true, editadoEl:new Date().toISOString()};
   guardarSilencioso();
   saveState();
@@ -3552,7 +4007,7 @@ function guardarObra(){
   saveState();
   closeModal("modal-obra");
   render();
-  showToast("✓ Obra guardada","ok");
+  showToast("✓ Proyecto registrado","ok");
 }
 
 // ════════════════════════════════════════════════════════════
@@ -3572,7 +4027,7 @@ function guardarBanco(){
   saveState();
   closeModal("modal-banco");
   render();
-  showToast("✓ Cuenta guardada","ok");
+  showToast("✓ Cuenta registrada","ok");
 }
 
 // ════════════════════════════════════════════════════════════
@@ -3582,10 +4037,28 @@ function guardarBanco(){
 function restaurarMovimiento(id){
   const idx = state.movs.findIndex(m=>m.id===id);
   if(idx<0) return;
+  const m = state.movs[idx];
+  const ahora = new Date().toISOString();
+
+  // Si es transferencia: restaurar par completo
+  if(m.esTransferencia && m.refId){
+    state.movs.forEach((x, i) => {
+      if(x.refId === m.refId){
+        state.movs[i] = {...x, eliminado:false, editadoEl:ahora};
+      }
+    });
+    guardarSilencioso();
+    saveState();
+    renderAdminDatos();
+    render();
+    showToast("✓ Transferencia restaurada (par completo)","ok");
+    return;
+  }
+
   state.movs[idx] = {
     ...state.movs[idx],
     eliminado: false,
-    editadoEl: new Date().toISOString()
+    editadoEl: ahora
   };
   guardarSilencioso();
   saveState();
@@ -3608,7 +4081,17 @@ function borrarDefinitivo(id){
     return;
   }
   // Borrado físico real — única excepción a Regla 8, solo desde papelera con doble confirmación
-  state.movs = state.movs.filter(m=>m.id!==id);
+  // Si es transferencia, borrar el par completo
+  const movTarget = state.movs.find(m=>m.id===id);
+  if(movTarget && movTarget.esTransferencia && movTarget.refId){
+    const idsPareja = state.movs.filter(m=>m.refId===movTarget.refId).map(m=>m.id);
+    state.movs = state.movs.filter(m=>!idsPareja.includes(m.id));
+    state.pendientesSync = (state.pendientesSync || []).filter(m=>!idsPareja.includes(m.id));
+  } else {
+    state.movs = state.movs.filter(m=>m.id!==id);
+    // Purga también de la cola de sincronización: sin esto, GAS recibe el mov y lo "revive"
+    state.pendientesSync = (state.pendientesSync || []).filter(m=>m.id!==id);
+  }
   saveState();
   renderAdminDatos();
   showToast("Eliminado permanentemente","err");
@@ -3698,10 +4181,32 @@ function validarMov(mov){
 //  Los movimientos van SIEMPRE a MOV_LOG (una fila por mov)
 // ================================================================
 function prepararEstadoParaEnvio(estadoOriginal){
-  const copia = JSON.parse(JSON.stringify(estadoOriginal));
-  copia.movs = []; // Vaciar — los movs ya están en MOV_LOG
-  copia.pendientesSync = []; // No persistir cola offline en la nube
+  // FIX 3.6 #13: shallow clone con override directo. Antes hacía
+  // JSON.parse(JSON.stringify(estado)) clonando 1-2MB innecesarios
+  // de movs y pendientesSync que de inmediato se vaciaban → jank en mobile.
+  // movs y pendientesSync se omiten del payload (van vía MOV_LOG).
+  // Resto de campos se serializan tal cual; no se mutan referencias.
+  const copia = {...estadoOriginal, movs:[], pendientesSync:[]};
   return JSON.stringify(copia);
+}
+
+// ════════════════════════════════════════════════════════════
+//  DEVICE ID — Helper defensivo
+//  Garantiza que TODO payload de sync incluya un deviceId válido
+//  aunque state.subscription esté corrupto o no inicializado.
+//  Coordinado con backend v1.5 que valida deviceId en endpoints
+//  saveFullState, saveBatch, saveMovimiento.
+// ════════════════════════════════════════════════════════════
+function getDeviceIdSeguro(){
+  const did = state.subscription?.deviceId;
+  if(did && typeof did === "string" && did.length >= 10) return did;
+  // Fallback: regenerar y repararse silenciosamente
+  const nuevo = generateDeviceId();
+  if(state.subscription){
+    state.subscription.deviceId = nuevo;
+    try { saveState(); } catch(e){}
+  }
+  return nuevo;
 }
 
 // Guardar estado de configuración en Sheets (sin movimientos)
@@ -3711,8 +4216,12 @@ function saveFullStateToCloud(){
   const estadoJSON = prepararEstadoParaEnvio(state);
   fetch(url, {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({action: "saveFullState", state: estadoJSON})
+    headers: {"Content-Type": "text/plain;charset=utf-8"},
+    body: JSON.stringify({
+      action: "saveFullState",
+      deviceId: getDeviceIdSeguro(),
+      state: estadoJSON
+    })
   }).catch(()=>{}); // silencioso — no crítico
 }
 
@@ -3786,8 +4295,12 @@ function syncMovimiento(mov, onSuccess, onError){
 
   fetch(url, {
     method:  "POST",
-    headers: {"Content-Type":"application/json"},
-    body:    JSON.stringify({action:"saveMovimiento", mov: movGAS})
+    headers: {"Content-Type":"text/plain;charset=utf-8"},
+    body:    JSON.stringify({
+      action:   "saveMovimiento",
+      deviceId: getDeviceIdSeguro(),
+      mov:      movGAS
+    })
   })
     .then(r=>{
       // FIFO: solo continúa con HTTP 200 explícito
@@ -3804,7 +4317,7 @@ function syncMovimiento(mov, onSuccess, onError){
 // ════════════════════════════════════════════════════════════
 //  BATCH SYNC — envía toda la cola en un solo fetch
 //  Sesión 7: reemplaza el loop de syncMovimiento uno a uno
-//  GAS debe aceptar action:"saveBatch", movs:[...]
+//  GAS debe aceptar action:"saveBatchMovimientos", movs:[...]
 // ════════════════════════════════════════════════════════════
 function saveBatchMovimientos(movs, onSuccess, onError){
   const url = getGasUrl();
@@ -3815,8 +4328,12 @@ function saveBatchMovimientos(movs, onSuccess, onError){
 
   fetch(url, {
     method:  "POST",
-    headers: {"Content-Type":"application/json"},
-    body:    JSON.stringify({action:"saveBatch", movs: batch})
+    headers: {"Content-Type":"text/plain;charset=utf-8"},
+    body:    JSON.stringify({
+      action:   "saveBatchMovimientos",
+      deviceId: getDeviceIdSeguro(),
+      movs:     batch
+    })
   })
     .then(r=>{
       // FIFO: solo continúa con HTTP 200 explícito
@@ -3849,12 +4366,15 @@ function vaciarColaPendientes(){
   const cola = state.pendientesSync.slice().sort((a,b)=>
     new Date(a.createdAt||a.creadoEl||0) - new Date(b.createdAt||b.creadoEl||0)
   );
+  // Snapshot de IDs enviados — solo estos se eliminarán de la cola al éxito
+  // Si el usuario crea un mov nuevo durante el fetch, no se pierde
+  const idsEnviados = new Set(cola.map(m => m.id));
 
   // Intentar batch primero — 1 fetch para N movimientos
   saveBatchMovimientos(cola,
     function(){ // éxito batch
       _retryProgramado = false;
-      state.pendientesSync = [];
+      state.pendientesSync = (state.pendientesSync || []).filter(p => !idsEnviados.has(p.id));
       state.lastCloudSync  = new Date().toISOString();
       saveState();
       actualizarBadgePendientes();
@@ -3865,7 +4385,8 @@ function vaciarColaPendientes(){
       function enviarSiguiente(){
         if(indice >= cola.length){
           _retryProgramado = false;
-          state.pendientesSync = [];
+          // Los exitosos individuales ya se filtraron en cada callback;
+          // no tocar la cola entera para no perder movs nuevos del usuario.
           state.lastCloudSync  = new Date().toISOString();
           saveState();
           actualizarBadgePendientes();
@@ -3875,7 +4396,7 @@ function vaciarColaPendientes(){
         const mov = cola[indice];
         syncMovimiento(mov,
           function(){
-            state.pendientesSync = state.pendientesSync.filter(p=>p.id!==mov.id);
+            state.pendientesSync = (state.pendientesSync || []).filter(p=>p.id!==mov.id);
             saveState();
             indice++;
             enviarSiguiente();
@@ -4138,7 +4659,7 @@ function confirmarAccion(btnId, accion){
 //  INACTIVIDAD DE OBRA (punto naranja)
 // ════════════════════════════════════════════════════════════
 function obraInactiva(obraId){
-  const movs = state.movs.filter(m => m.obra && m.obra.startsWith(obraId) && !m.eliminado);
+  const movs = state.movs.filter(m => m.obra && (m.obra===obraId||m.obra.startsWith(obraId+" ")) && !m.eliminado);
   if(movs.length === 0){
     const o = (state.obras||[]).find(ob => ob.id === obraId);
     if(!o?.fecha_inicio) return false;
@@ -4277,30 +4798,11 @@ function renderAlertas(){
   el.innerHTML = htmlObras + htmlBancos;
 }
 
-// ── S5.5: Control de concurrencia con checkLastModified ──────
-// Antes de guardar en la nube: verificar si alguien más guardó desde otro dispositivo
-let _lastKnownTimestamp = "";
-function checkConcurrencia(onOk, onConflicto){
-  const url = getGasUrl();
-  if(!url){ onOk(); return; }
-  fetch(url+"?action=checkLastModified")
-    .then(r=>r.json())
-    .then(data=>{
-      const remoto = data.timestamp||"";
-      if(_lastKnownTimestamp && remoto && remoto !== _lastKnownTimestamp){
-        // Alguien guardó desde otro dispositivo
-        onConflicto(remoto);
-      } else {
-        _lastKnownTimestamp = remoto;
-        onOk();
-      }
-    })
-    .catch(()=>onOk()); // Si falla el check, continuar — no bloquear al usuario
-}
-
-function mostrarAlertaConcurrencia(){
-  showToast("⚠️ Cambios detectados en otro dispositivo — recargá para actualizar","err");
-}
+// ── FIX 3.6 #14: removidas checkConcurrencia y mostrarAlertaConcurrencia ──
+// Eran código muerto (definidas pero nunca invocadas). El control real de
+// concurrencia es responsabilidad del backend GAS v1.5 vía LockService +
+// validación deviceId. Si en el futuro se reintroduce control client-side,
+// debe enchufarse en saveFullStateToCloud, no en funciones aisladas.
 
 // ════════════════════════════════════════════════════════════
 //  PERSISTENCIA SILENCIOSA — guardar en cada cambio
@@ -4352,12 +4854,43 @@ function saveState(){
   try {
     invalidarCacheSaldo();
     const MAX_BYTES = 4.5 * 1024 * 1024; // 4.5 MB límite seguro
-    const serialized = JSON.stringify(state);
+    let serialized = JSON.stringify(state);
+
     if(serialized.length > MAX_BYTES){
-      console.error("saveState ABORTADO: state supera 4.5MB (" + (serialized.length/1024/1024).toFixed(2) + "MB). Posible logo base64 en state.");
-      if(typeof mostrarToast === 'function') mostrarToast("⚠️ No se pudo guardar: datos demasiado grandes. Revisá el logo.", "error");
+      console.error("saveState: state supera 4.5MB ("+(serialized.length/1024/1024).toFixed(2)+"MB). Intentando fallback sin logo.");
+
+      // Fallback: intentar guardar sin logo (libera ~80% en casos típicos)
+      const logoBackup = state.empresa?.logo;
+      if(logoBackup){
+        state.empresa.logo = "";
+        const sinLogo = JSON.stringify(state);
+        if(sinLogo.length <= MAX_BYTES){
+          // Persistir sin logo y avisar
+          state._storageLimitReached = true;
+          if(appMode === 'DEMO'){
+            localStorage.setItem(SK_DEMO, sinLogo);
+            window.dispatchEvent(new CustomEvent('zoku:stateChange', {detail:{mode:'DEMO'}}));
+          } else {
+            localStorage.setItem(SK, sinLogo);
+            window.dispatchEvent(new CustomEvent('zoku:stateChange', {detail:{mode:'REAL'}}));
+          }
+          showToast("⚠️ Logo removido temporalmente — almacenamiento casi lleno","err");
+          console.warn("saveState: logo eliminado para liberar espacio. Sincronizá ya.");
+          return;
+        } else {
+          // Restaurar logo si el fallback tampoco alcanza
+          state.empresa.logo = logoBackup;
+        }
+      }
+
+      // Fallback agotado: marcar flag persistente y bloquear escritura
+      state._storageLimitReached = true;
+      showToast("⚠️ Almacenamiento lleno — sincronizá ya","err");
       return;
     }
+
+    // Path normal
+    if(state._storageLimitReached) state._storageLimitReached = false;
     if(appMode === 'DEMO'){
       localStorage.setItem(SK_DEMO, serialized);
       window.dispatchEvent(new CustomEvent('zoku:stateChange', {detail:{mode:'DEMO'}}));
@@ -4367,7 +4900,14 @@ function saveState(){
     localStorage.setItem(SK, serialized);
     window.dispatchEvent(new CustomEvent('zoku:stateChange', {detail:{mode:'REAL'}}));
   } catch(e){
+    // QuotaExceededError o cualquier fallo de localStorage — antes era silencioso
     console.error("saveState error:", e);
+    if(e && e.name === "QuotaExceededError"){
+      state._storageLimitReached = true;
+      showToast("⚠️ Almacenamiento lleno — sincronizá ya","err");
+    } else {
+      showToast("⚠️ Error al guardar — verificá la consola","err");
+    }
   }
 }
 
@@ -4822,8 +5362,361 @@ function finishSetup(){
 }
 
 // ════════════════════════════════════════════════════════════
+//  SHARE REPORT — funciones (definidas antes del bootstrap por
+//  el guard de ?reporte=)
+// ════════════════════════════════════════════════════════════
+
+// Estado interno del share (URL del último link generado)
+let _shareLastUrl = "";
+let _shareLastObraNombre = "";
+
+function _safeMov(m){
+  // Sanitiza un movimiento para vista pública (sin banco, sin notas)
+  return {
+    fecha: m.fecha||"",
+    tipo: m.tipo||"",
+    obra: m.obra||"",
+    monto: m.monto||0,
+    estadoPago: m.estadoPago||""
+  };
+}
+
+function compartirObra(obraId){
+  const o = (state.obras||[]).find(x=>x.id===obraId);
+  if(!o){ showToast("Obra no encontrada","err"); return; }
+
+  const c = calcObra(o.id);
+  const tasaIVA = (o.iva_pct !== undefined && o.iva_pct !== null && o.iva_pct !== "") ? parseFloat(o.iva_pct)/100 : 0.10;
+  const iva_debito  = tasaIVA>0 ? Math.round(c.cobrado/(1+tasaIVA)*tasaIVA) : 0;
+  const iva_credito = tasaIVA>0 ? Math.round(c.gastos/(1+tasaIVA)*tasaIVA) : 0;
+  const credito_preobra = o.credito_preobra||0;
+  const pos_iva = iva_debito - iva_credito - credito_preobra;
+  const retenciones = o.etapas?o.etapas.reduce((s,e)=>s+(e.ret||0),0):0;
+  const esc_a = c.neto + retenciones;
+  const esc_b = c.neto;
+  const margen = c.cobrado>0?c.neto/c.cobrado:0;
+  const m = calcMetricasObra(o);
+
+  // Últimos 10 movimientos (sin notas internas, sin banco)
+  const ultimosMovs = (state.movs||[])
+    .filter(mv=>mv.obra && (mv.obra===o.id||mv.obra.startsWith(o.id+" ")) && !mv.eliminado)
+    .sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""))
+    .slice(0,10)
+    .map(_safeMov);
+
+  const reporte = {
+    obra: {
+      id: o.id,
+      nombre: o.nombre||"",
+      cliente: o.cliente||"",
+      estado: o.estado||"",
+      ubicacion: o.ubicacion||"",
+      tipo_obra: o.tipo_obra||"",
+      fecha_inicio: o.fecha_inicio||"",
+      fecha_fin: o.fecha_fin||"",
+      contrato: o.contrato||0,
+      iva_pct: (o.iva_pct!==undefined&&o.iva_pct!==null&&o.iva_pct!=="")?o.iva_pct:10
+    },
+    metricas: {
+      cobrado: c.cobrado,
+      gastos: c.gastos,
+      neto: c.neto,
+      margen: margen,
+      saldo_cobrar: Math.max(0, (o.contrato||0) - c.cobrado),
+      utilidadReal: m.utilidadReal,
+      margenReal: m.margenReal,
+      riesgo: m.riesgo,
+      riesgoLabel: m.riesgoLabel,
+      presionCaja: m.presionCaja
+    },
+    iva: {
+      debito: iva_debito,
+      credito: iva_credito,
+      credito_preobra: credito_preobra,
+      pos_neta: pos_iva,
+      tasa: (o.iva_pct!==undefined&&o.iva_pct!==null&&o.iva_pct!=="")?o.iva_pct:10
+    },
+    escenarios: {
+      esc_a: esc_a,
+      esc_b: esc_b,
+      retenciones: retenciones
+    },
+    moneda: state.moneda_principal||"GS",
+    movimientos: ultimosMovs,
+    empresa: {
+      nombre: (state.empresa && state.empresa.nombre) || "Mi Empresa"
+    },
+    generado: new Date().toISOString(),
+    ttl_dias: 7
+  };
+
+  const url = getGasUrl();
+  if(!url){ showToast("Sin conexión — intentá de nuevo","err"); return; }
+
+  showToast("Generando link…","ok");
+
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action: "shareReporte", reporte: reporte })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data && data.ok && data.id){
+      // Construir URL pública: misma página + ?reporte=ID
+      const baseUrl = window.location.origin + window.location.pathname;
+      const publicUrl = data.url || (baseUrl + "?reporte=" + data.id);
+      _shareLastUrl = publicUrl;
+      _shareLastObraNombre = o.id + " · " + (o.nombre||"");
+
+      const info = document.getElementById("share-obra-info");
+      if(info) info.textContent = _shareLastObraNombre;
+      const inp = document.getElementById("share-link-input");
+      if(inp) inp.value = publicUrl;
+
+      document.getElementById("modal-share").classList.add("open");
+    } else {
+      showToast("Sin conexión — intentá de nuevo","err");
+    }
+  })
+  .catch(err=>{
+    console.error("compartirObra error:", err);
+    showToast("Sin conexión — intentá de nuevo","err");
+  });
+}
+
+function copiarLinkShare(){
+  if(!_shareLastUrl){ showToast("No hay link para copiar","err"); return; }
+  const inp = document.getElementById("share-link-input");
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(_shareLastUrl)
+      .then(()=>showToast("✓ Link copiado","ok"))
+      .catch(()=>{
+        // Fallback: select + execCommand
+        if(inp){ inp.select(); try{ document.execCommand('copy'); showToast("✓ Link copiado","ok"); }catch(e){ showToast("No se pudo copiar","err"); } }
+      });
+  } else if(inp){
+    inp.select();
+    try{ document.execCommand('copy'); showToast("✓ Link copiado","ok"); }
+    catch(e){ showToast("No se pudo copiar","err"); }
+  }
+}
+
+function abrirWhatsappShare(){
+  if(!_shareLastUrl) return;
+  const txt = encodeURIComponent("Reporte de obra " + _shareLastObraNombre + "\n\n" + _shareLastUrl);
+  window.open("https://wa.me/?text=" + txt, "_blank");
+}
+
+// ════════════════════════════════════════════════════════════
+//  VISTA PÚBLICA — render del reporte compartido (read-only)
+// ════════════════════════════════════════════════════════════
+function _pubFmtM(n, moneda){
+  const sym = { GS:"Gs.", USD:"USD", ARS:"ARS", BRL:"BRL" }[moneda||"GS"]||"Gs.";
+  const dec = (moneda||"GS")!=="GS" ? 2 : 0;
+  const val = dec>0
+    ? new Intl.NumberFormat("es-PY",{minimumFractionDigits:2,maximumFractionDigits:2}).format(n||0)
+    : new Intl.NumberFormat("es-PY").format(Math.round(n||0));
+  return sym+" "+val;
+}
+function _pubFmtPct(n){ return Math.round((n||0)*100)+"%"; }
+function _pubFmtD(s){ if(!s) return "—"; const p=String(s).split("-"); return p[2]+"/"+p[1]+"/"+p[0]; }
+
+function renderReportePublico(rep){
+  const root = document.getElementById("public-view");
+  if(!root) return;
+
+  const moneda = rep.moneda || "GS";
+  const fm = (n)=>_pubFmtM(n, moneda);
+
+  const generado = rep.generado ? new Date(rep.generado) : new Date();
+  const ttl = rep.ttl_dias || 7;
+  const expira = new Date(generado.getTime() + ttl*24*60*60*1000);
+  const fmtFecha = d => d.toLocaleDateString("es-PY",{day:"2-digit",month:"short",year:"numeric"});
+
+  const o = rep.obra || {};
+  const m = rep.metricas || {};
+  const iva = rep.iva || {};
+  const esc = rep.escenarios || {};
+  const movs = rep.movimientos || [];
+  const empresa = (rep.empresa && rep.empresa.nombre) || "Empresa";
+
+  const badgeColor = o.estado==="Finalizada" ? "background:rgba(0,200,150,0.15);color:var(--green)"
+                  : o.estado==="Activa"      ? "background:rgba(43,110,212,0.15);color:var(--blue2)"
+                  :                            "background:rgba(245,158,11,0.15);color:var(--amber)";
+
+  const ivaPosColor = iva.pos_neta<=0 ? "var(--green)" : "var(--red)";
+  const ivaPosBg    = iva.pos_neta<=0 ? "var(--green-pale)" : "var(--red-pale)";
+  const ivaPosLabel = iva.pos_neta<=0 ? "✅ SET te debe" : "⚠️ Debés a SET";
+
+  const movsHtml = movs.length === 0
+    ? '<div style="text-align:center;color:var(--text3);font-size:12px;padding:14px">Sin movimientos registrados</div>'
+    : movs.map(mv=>{
+        const isCob = (mv.tipo==="Cobro" || mv.tipo==="Depósito");
+        const color = isCob ? "var(--green)" : "var(--red)";
+        const sig = isCob ? "+" : "−";
+        const pendBadge = mv.estadoPago==="PENDIENTE" ? ' <span style="font-size:9px;color:var(--amber);font-weight:800">PEND</span>' : '';
+        return `<div class="public-mov-row">
+          <div>
+            <div class="public-mov-tipo">${mv.tipo||"—"}${pendBadge}</div>
+            <div class="public-mov-meta">${_pubFmtD(mv.fecha)}</div>
+          </div>
+          <div class="public-mov-monto" style="color:${color}">${sig} ${fm(mv.monto)}</div>
+        </div>`;
+      }).join("");
+
+  root.innerHTML = `
+    <div class="public-wrap">
+      <div class="public-header">
+        <div class="public-brand">
+          <div class="public-brand-logo">Z</div>
+          <div>
+            <div class="public-empresa">${empresa}</div>
+            <div class="public-empresa-sub">Reporte ZOKU</div>
+          </div>
+        </div>
+        <div class="public-validez">
+          Generado ${fmtFecha(generado)}<br>
+          Válido hasta ${fmtFecha(expira)}
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <div class="public-obra-title">${o.nombre||"—"}</div>
+        <div class="public-obra-meta">${o.id||""}${o.cliente?" · Cliente: "+o.cliente:""}</div>
+        <div class="public-obra-meta">${[o.ubicacion,o.tipo_obra].filter(Boolean).join(" · ")}</div>
+        <div class="public-obra-meta">${[o.fecha_inicio,o.fecha_fin].filter(Boolean).map(_pubFmtD).join(" → ")}</div>
+        <span class="public-obra-badge" style="${badgeColor};margin-top:6px">${o.estado||"—"}</span>
+      </div>
+
+      <div class="public-section">
+        <div class="public-section-title">Métricas principales</div>
+        <div class="public-grid-4">
+          <div><div class="public-num-label">Contrato</div><div class="public-num-val" style="color:var(--gold)">${fm(o.contrato)}</div></div>
+          <div><div class="public-num-label">Cobrado</div><div class="public-num-val" style="color:var(--green)">${fm(m.cobrado)}</div></div>
+          <div><div class="public-num-label">Por cobrar</div><div class="public-num-val" style="color:var(--amber)">${fm(m.saldo_cobrar)}</div></div>
+          <div><div class="public-num-label">Gastos</div><div class="public-num-val" style="color:var(--red)">${fm(m.gastos)}</div></div>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="public-num-label">Neto · Margen</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">Riesgo obra: <strong style="color:${m.riesgo>=0.80?'var(--red)':m.riesgo>=0.60?'var(--amber)':'var(--green)'}">${m.riesgoLabel||"—"}</strong></div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:18px;font-weight:800;font-family:'DM Mono',monospace;color:${m.neto>=0?'var(--green)':'var(--red)'}">${fm(m.neto)}</div>
+            <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">${_pubFmtPct(m.margen)} margen</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="public-section">
+        <div class="public-section-title">Escenarios de cierre</div>
+        <div class="public-grid-2">
+          <div class="public-esc-card" style="background:var(--green-pale)">
+            <div class="public-esc-label" style="color:var(--green)">ESC. A — c/retenciones</div>
+            <div class="public-esc-val" style="color:var(--green)">${fm(esc.esc_a)}</div>
+          </div>
+          <div class="public-esc-card" style="background:var(--blue-pale)">
+            <div class="public-esc-label" style="color:var(--blue2)">ESC. B — caja real</div>
+            <div class="public-esc-val" style="color:var(--blue2)">${fm(esc.esc_b)}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="public-section">
+        <div class="public-section-title">Posición IVA (${iva.tasa||10}%)</div>
+        <div class="public-iva-row"><span class="lbl">IVA Débito (cobrado)</span><span class="val" style="color:var(--red)">${fm(iva.debito)}</span></div>
+        <div class="public-iva-row"><span class="lbl">IVA Crédito (compras)</span><span class="val" style="color:var(--green)">${fm(iva.credito)}</span></div>
+        ${iva.credito_preobra>0?`<div class="public-iva-row"><span class="lbl">Crédito pre-obra</span><span class="val" style="color:var(--green)">${fm(iva.credito_preobra)}</span></div>`:""}
+        <div class="public-iva-result" style="background:${ivaPosBg}">
+          <span style="font-size:12px;font-weight:800;color:${ivaPosColor}">${ivaPosLabel}</span>
+          <span style="font-size:16px;font-weight:800;font-family:'DM Mono',monospace;color:${ivaPosColor}">${fm(Math.abs(iva.pos_neta))}</span>
+        </div>
+      </div>
+
+      <div class="public-section">
+        <div class="public-section-title">Últimos movimientos</div>
+        ${movsHtml}
+      </div>
+
+      <div style="text-align:center;font-size:10px;color:var(--text3);margin:24px 0 8px;letter-spacing:0.06em;text-transform:uppercase">
+        Reporte de solo lectura · Datos sensibles ocultos
+      </div>
+    </div>
+
+    <div class="public-cta">
+      <div class="public-cta-text">¿Querés controlar tus obras así?</div>
+      <a class="public-cta-btn" href="https://zoku.io" target="_blank" rel="noopener">Probar ZOKU →</a>
+    </div>
+  `;
+}
+
+function renderReporteError(mensaje){
+  const root = document.getElementById("public-view");
+  if(!root) return;
+  root.innerHTML = `
+    <div class="public-wrap">
+      <div class="public-error">
+        <div class="public-error-ico">⏱</div>
+        <div class="public-error-title">Reporte expirado o no encontrado</div>
+        <div class="public-error-sub">${mensaje||"Este link ya no está disponible. Pedile al emisor que genere uno nuevo."}</div>
+      </div>
+      <div class="public-cta">
+        <div class="public-cta-text">¿Querés controlar tus obras así?</div>
+        <a class="public-cta-btn" href="https://zoku.io" target="_blank" rel="noopener">Probar ZOKU →</a>
+      </div>
+    </div>
+  `;
+}
+
+function cargarReportePublico(reporteId){
+  // Modo público: ocultar todo el chrome de la app, mostrar solo public-view
+  document.documentElement.classList.add('zoku-public');
+  document.documentElement.classList.remove('zoku-booting');
+  const setupEl = document.getElementById('setupScreen'); if(setupEl) setupEl.style.display='none';
+  const splashEl = document.getElementById('zoku-splash'); if(splashEl) splashEl.remove();
+  const appEl = document.querySelector('.app'); if(appEl) appEl.style.display='none';
+  const dtEl = document.querySelector('.dt-shell'); if(dtEl) dtEl.style.display='none';
+
+  const root = document.getElementById('public-view');
+  if(root){
+    root.style.display='block';
+    root.innerHTML = '<div class="public-wrap" style="text-align:center;padding-top:80px;color:var(--text2);font-size:14px">Cargando reporte…</div>';
+  }
+
+  const url = GAS_URL + "?action=getReporte&id=" + encodeURIComponent(reporteId);
+  fetch(url)
+    .then(r=>r.json())
+    .then(data=>{
+      if(data && data.ok && data.reporte){
+        renderReportePublico(data.reporte);
+      } else {
+        renderReporteError(data && data.error ? data.error : null);
+      }
+    })
+    .catch(err=>{
+      console.error("cargarReportePublico error:", err);
+      renderReporteError("No pudimos conectar con el servidor. Probá de nuevo en unos minutos.");
+    });
+}
+
+// ════════════════════════════════════════════════════════════
 //  INIT — v3.8
 // ════════════════════════════════════════════════════════════
+
+// Guard: si la URL trae ?reporte=XXXX → modo público (no carga estado del usuario)
+(function(){
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const repId = params.get('reporte');
+    if(repId && /^[A-Za-z0-9_-]{4,32}$/.test(repId)){
+      cargarReportePublico(repId);
+      window._zokuPublicMode = true;
+    }
+  } catch(e){ console.error("public mode guard falló:", e); }
+})();
+
+if(!window._zokuPublicMode){
 try { loadState(); } catch(e){ console.error("loadState falló:", e); }
 // Splash: mostrar logo apenas tengamos APP_LOGO_B64
 (function(){
@@ -4849,6 +5742,7 @@ if(appMode === 'REAL') try{ _aplicarModoReal(); }catch(e){}
 if(window.innerWidth < 1024){
   document.documentElement.classList.remove('zoku-booting');
 }
+} // fin if(!window._zokuPublicMode)
 
 </script>
 <script>
@@ -5500,9 +6394,9 @@ function dtRenderIvaView(c){
   let ivaDebito=0, ivaCredito=0, creditoPre=0;
 
   obras.forEach(o=>{
-    const pct = parseFloat(o.iva_pct)||10;
+    const pct = (o.iva_pct!==undefined&&o.iva_pct!==null&&o.iva_pct!=="") ? parseFloat(o.iva_pct) : 10;
     const factor = pct/100;
-    movs.filter(m=>m.obra&&m.obra.startsWith(o.id)).forEach(m=>{
+    movs.filter(m=>m.obra&&(m.obra===o.id||m.obra.startsWith(o.id+" "))).forEach(m=>{
       if(m.tipo==='Cobro'||m.tipo==='Depósito') ivaDebito  += (m.monto||0)*factor/(1+factor);
       else                                       ivaCredito += (m.monto||0)*factor/(1+factor);
     });
@@ -5516,10 +6410,10 @@ function dtRenderIvaView(c){
   const fmt = n => sym+' '+new Intl.NumberFormat('es-PY').format(Math.round(Math.abs(n)));
 
   const desglose = obras.map(o=>{
-    const pct = parseFloat(o.iva_pct)||10;
+    const pct = (o.iva_pct!==undefined&&o.iva_pct!==null&&o.iva_pct!=="") ? parseFloat(o.iva_pct) : 10;
     const factor = pct/100;
     let deb=0,cred=0,pre=o.credito_preobra||0;
-    movs.filter(m=>m.obra&&m.obra.startsWith(o.id)).forEach(m=>{
+    movs.filter(m=>m.obra&&(m.obra===o.id||m.obra.startsWith(o.id+" "))).forEach(m=>{
       if(m.tipo==='Cobro'||m.tipo==='Depósito') deb+=(m.monto||0)*factor/(1+factor);
       else cred+=(m.monto||0)*factor/(1+factor);
     });
@@ -6001,16 +6895,23 @@ function dtRenderAjustesView(c){
 }
 
 // ── SYNC STATUS — reactivo a CustomEvent (no polling) ────────
+// FIX 3.6 #11: handler idempotente. Sin guard, cada toggle de viewport
+// (mobile→desktop) re-ejecutaba dtInit→dtStartSyncStatus y acumulaba
+// listeners de zoku:stateChange (memory leak progresivo).
+let _zokuStateChangeHandler = null;
 function dtStartSyncStatus(){
   dtUpdateSyncStatus();
-  // Suscribirse al evento de guardado — reemplaza setInterval de 30s
-  window.addEventListener('zoku:stateChange', ()=>{
+  if(_zokuStateChangeHandler){
+    window.removeEventListener('zoku:stateChange', _zokuStateChangeHandler);
+  }
+  _zokuStateChangeHandler = function(){
     if(isDesktop() && document.getElementById('desktopLayout').style.display!=='none'){
       dtUpdateSyncStatus();
       dtUpdateBadges();
       dtRenderView();
     }
-  });
+  };
+  window.addEventListener('zoku:stateChange', _zokuStateChangeHandler);
 }
 
 function dtUpdateSyncStatus(){
@@ -6086,7 +6987,7 @@ window.addEventListener('resize', ()=>{
 });
 
 // Desktop init — corre directamente (DOMContentLoaded ya pasó cuando este script ejecuta)
-if(isDesktop()){
+if(!window._zokuPublicMode && isDesktop()){
   try { dtInit(); } catch(e){ console.error("dtInit falló:", e); }
 }
 // Levantar cortina siempre — mobile ya la levantó, desktop la levanta aquí
