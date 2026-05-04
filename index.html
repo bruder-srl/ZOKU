@@ -2015,9 +2015,66 @@ html.zoku-public body{visibility:visible !important}
       <label id="lbl-monto">Monto (Gs.)</label>
       <input class="fi fi-monto gasto" id="f-monto" type="text" placeholder="0" inputmode="numeric" oninput="fmtInput(this)"/>
     </div>
+    <!-- FIX 20 (Chat 3.8): retenciones SET desagregadas (IVA + IRE + Fuente) -->
+    <div class="fg" id="fg-retencion-cobro" style="display:none;background:var(--card2);border-radius:12px;padding:12px;border:1px dashed var(--border)">
+      <div style="font-size:11px;font-weight:800;color:var(--blue2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em">Cobro con retenciones SET (opcional)</div>
+      <label style="font-size:11px">Facturado bruto (lo que dice la factura)</label>
+      <input class="fi fi-monto" id="f-monto-bruto" type="text" placeholder="0" inputmode="numeric" oninput="fmtInput(this)"/>
+
+      <!-- Retención IVA: Resolución General 90/21 SET -->
+      <div style="margin-top:10px;padding-top:8px;border-top:1px dashed var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px">RETENCIÓN IVA (Res. 90/21)</div>
+        <label style="font-size:11px">% retenido sobre el IVA débito</label>
+        <select class="fi" id="f-retencion-iva-pct">
+          <option value="0">Sin retención</option>
+          <option value="30">30% del IVA</option>
+          <option value="70">70% del IVA</option>
+          <option value="100">100% del IVA</option>
+        </select>
+        <label style="font-size:11px;margin-top:6px;display:block">Monto IVA retenido (Gs.)</label>
+        <input class="fi fi-monto" id="f-retencion-iva" type="text" placeholder="0" inputmode="numeric" oninput="fmtInput(this)"/>
+      </div>
+
+      <!-- Retención IRE: Ley 6380/19 art. 84 -->
+      <div style="margin-top:10px;padding-top:8px;border-top:1px dashed var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px">RETENCIÓN IRE (Ley 6380/19)</div>
+        <label style="font-size:11px">% retenido (renta empresarial)</label>
+        <select class="fi" id="f-retencion-ire-pct">
+          <option value="0">Sin retención</option>
+          <option value="0.5">0,5%</option>
+          <option value="1">1%</option>
+          <option value="2">2%</option>
+          <option value="3">3%</option>
+          <option value="5">5%</option>
+          <option value="8">8%</option>
+          <option value="10">10%</option>
+        </select>
+        <label style="font-size:11px;margin-top:6px;display:block">Monto IRE retenido (Gs.)</label>
+        <input class="fi fi-monto" id="f-retencion-ire" type="text" placeholder="0" inputmode="numeric" oninput="fmtInput(this)"/>
+      </div>
+
+      <!-- Retención Fuente: Ley 6380/19 art. 86 (no contribuyentes) -->
+      <div style="margin-top:10px;padding-top:8px;border-top:1px dashed var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px">RETENCIÓN FUENTE (no contribuyentes)</div>
+        <label style="font-size:11px;margin-top:2px;display:block">Monto retenido (Gs.)</label>
+        <input class="fi fi-monto" id="f-retencion-fuente" type="text" placeholder="0" inputmode="numeric" oninput="fmtInput(this)"/>
+      </div>
+
+      <div style="font-size:10px;color:var(--text3);margin-top:10px;line-height:1.4">El monto cobrado neto = <b>Facturado − IVA retenido − IRE retenido − Fuente retenida</b>. El IVA débito se declara sobre el bruto facturado; IRE y Fuente NO afectan el IVA débito.</div>
+    </div>
     <div class="fg">
       <label>Obra</label>
       <select class="fi" id="f-obra"></select>
+    </div>
+    <!-- FIX 17 (Chat 3.7): IVA override por movimiento (opcional) -->
+    <div class="fg">
+      <label>IVA aplicado <span style="font-size:9px;color:var(--text3);font-weight:600">— opcional, hereda de obra</span></label>
+      <select class="fi" id="f-iva-override">
+        <option value="">Hereda de obra</option>
+        <option value="10">10%</option>
+        <option value="5">5%</option>
+        <option value="0">Exento</option>
+      </select>
     </div>
     <div class="fg">
       <label>Categoría</label>
@@ -2074,7 +2131,8 @@ html.zoku-public body{visibility:visible !important}
       <div class="modal-title" style="margin-bottom:0">Activar proyecto</div>
       <button onclick="closeModal('modal-obra')" style="width:32px;height:32px;border-radius:50%;background:var(--card2);border:1.5px solid var(--border);font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-family:'DM Sans',sans-serif">✕</button>
     </div>
-    <div class="fg"><label>ID Obra (ej: BR-002)</label><input class="fi" id="fo-id" type="text" placeholder="BR-002"/></div>
+    <input type="hidden" id="fo-uuid"/>
+    <div class="fg"><label>ID Obra (ej: BR-002) <span style="font-size:9px;color:var(--text3);font-weight:600">— editable</span></label><input class="fi" id="fo-id" type="text" placeholder="BR-002"/></div>
     <div class="fg"><label>Nombre</label><input class="fi" id="fo-nombre" type="text" placeholder="Nombre del proyecto"/></div>
     <div class="fg"><label>Cliente</label><input class="fi" id="fo-cliente" type="text" placeholder="Nombre del cliente"/></div>
     <div class="fg"><label>RUC cliente</label><input class="fi" id="fo-ruc" type="text" placeholder="80000000-0"/></div>
@@ -2228,7 +2286,7 @@ let state = {
   moneda_principal: "GS",
   pendientesSync:   [],
   lastCloudSync:    "",
-  schemaVersion:    2,
+  schemaVersion:    4,
   subscription:     null,
 };
 
@@ -2296,6 +2354,122 @@ function loadState(){
           const key = (appMode === 'DEMO') ? SK_DEMO : SK;
           localStorage.setItem(key, JSON.stringify(state));
         } catch(e){ console.error("Error persistiendo migración v2:", e); }
+      }
+      if(state.schemaVersion < 3){
+        // ─── v2 → v3 ───────────────────────────────────────────
+        // FIX 16: separar UUID interno (inmutable) del código display (editable)
+        // FIX 17: defaults para iva_pct override y genera_credito_fiscal por mov
+        // FIX 18: separar monto_facturado_bruto y retencion_iva en cobros
+        let huerfanos = 0;
+        let migradosUuid = 0;
+
+        // Paso 1 — generar UUID por obra; copiar id legacy a codigo display
+        (state.obras||[]).forEach(o=>{
+          if(!o.uuid) o.uuid = _genUUID();
+          if(!o.codigo) o.codigo = o.id; // o.id seguirá conviviendo como código humano
+        });
+
+        // Paso 2 — mapear obraUuid en cada mov por matching de prefijo de string
+        const codigoToUuid = {};
+        (state.obras||[]).forEach(o=>{ codigoToUuid[o.codigo] = o.uuid; });
+
+        (state.movs||[]).forEach(m=>{
+          if(m.obraUuid) return; // ya migrado en una corrida previa
+          // Sentinela: movs sin obra real se consolidan en "General"
+          if(!m.obra || m.obra === "General"){
+            m.obraUuid = "GENERAL";
+            return;
+          }
+          // Extraer código del prefijo: "OB-001 Vivienda Rodríguez" → "OB-001"
+          // El obraId legacy también es confiable si está presente
+          const codigoCandidato = (m.obraId && codigoToUuid[m.obraId])
+            ? m.obraId
+            : (m.obra||"").split(" ")[0];
+          const uuid = codigoToUuid[codigoCandidato];
+          if(uuid){
+            m.obraUuid = uuid;
+            migradosUuid++;
+          } else {
+            m.obraUuid = null;
+            huerfanos++;
+          }
+        });
+
+        // Paso 3 — defaults retenciones SET en cobros existentes
+        // Sin retención retroactiva: monto_facturado_bruto = monto, retencion_iva = 0
+        (state.movs||[]).forEach(m=>{
+          if(isCobro(m.tipo) && m.monto_facturado_bruto === undefined){
+            m.monto_facturado_bruto = m.monto || 0;
+            m.retencion_iva = 0;
+          }
+        });
+
+        // Paso 4 — defaults genera_credito_fiscal en gastos existentes
+        // Por defecto los gastos generan crédito fiscal salvo movs bancarios/transferencias
+        (state.movs||[]).forEach(m=>{
+          if(m.genera_credito_fiscal !== undefined) return;
+          if(m.esTransferencia || m.tipo === "Transferencia" || m.tipo === "Movimiento bancario"){
+            m.genera_credito_fiscal = false;
+          } else if(isGasto(m.tipo)){
+            m.genera_credito_fiscal = true;
+          } else {
+            m.genera_credito_fiscal = false;
+          }
+        });
+
+        state.schemaVersion = 3;
+        console.info("ZOKU: migración schema v2 → v3 completada — "+migradosUuid+" movs con obraUuid, "+huerfanos+" huérfanos");
+        if(huerfanos > 0){
+          console.warn("ZOKU v3: "+huerfanos+" movimientos huérfanos sin obraUuid — revisar manualmente");
+          // Toast diferido — DOM puede no estar listo aún
+          setTimeout(function(){
+            if(typeof showToast === "function"){
+              showToast("⚠️ "+huerfanos+" movimiento(s) sin obra asignada — revisar","err");
+            }
+          }, 800);
+        }
+
+        // Persistir inmediatamente
+        try {
+          const key = (appMode === 'DEMO') ? SK_DEMO : SK;
+          localStorage.setItem(key, JSON.stringify(state));
+        } catch(e){ console.error("Error persistiendo migración v3:", e); }
+      }
+      if(state.schemaVersion < 4){
+        // ─── v3 → v4 ───────────────────────────────────────────
+        // FIX 20: retenciones SET desagregadas (IVA/IRE/Fuente)
+        // - Renombrar legacy retencion_iva → retencion_iva_monto (preserva valor)
+        // - Defaults retencion_iva_pct, retencion_ire_monto, retencion_ire_pct,
+        //   retencion_fuente_monto = 0 en cobros existentes
+        // - Identidad fiscal: monto_facturado_bruto = monto_neto_cobrado
+        //     + retencion_iva_monto + retencion_ire_monto + retencion_fuente_monto
+        // - IVA débito sigue sobre monto_facturado_bruto. IRE y Fuente NO inflan
+        //   IVA débito (Ley 6380/19 arts. 84 y 86: retenciones de renta operan
+        //   sobre la utilidad, no sobre el bruto facturado).
+        let migradosRet = 0;
+        (state.movs||[]).forEach(m=>{
+          if(!isCobro(m.tipo)) return;
+          // Preservar retencion_iva legacy como retencion_iva_monto
+          if(m.retencion_iva_monto === undefined){
+            const legacy = (m.retencion_iva !== undefined && m.retencion_iva !== null)
+              ? Number(m.retencion_iva) || 0
+              : 0;
+            m.retencion_iva_monto = legacy;
+            migradosRet++;
+          }
+          // Defaults nuevos campos (0 = sin retención capturada retroactivamente)
+          if(m.retencion_iva_pct === undefined)     m.retencion_iva_pct     = 0;
+          if(m.retencion_ire_monto === undefined)   m.retencion_ire_monto   = 0;
+          if(m.retencion_ire_pct === undefined)     m.retencion_ire_pct     = 0;
+          if(m.retencion_fuente_monto === undefined) m.retencion_fuente_monto = 0;
+          // retencion_iva legacy queda como sombra para auditoría manual; no se borra.
+        });
+        state.schemaVersion = 4;
+        console.info("ZOKU: migración schema v3 → v4 completada — "+migradosRet+" cobros con retención SET desagregada");
+        try {
+          const key = (appMode === 'DEMO') ? SK_DEMO : SK;
+          localStorage.setItem(key, JSON.stringify(state));
+        } catch(e){ console.error("Error persistiendo migración v4:", e); }
       }
       // Migración defensiva subscription
       if(!state.subscription) startTrial();
@@ -2417,6 +2591,12 @@ function checkAccess(){
 }
 
 function _handleOffline(){
+  // CHAT 3.8.1: bloqueo neutralizado hasta Chat 6 (sistema suscripciones).
+  // Razón: obra rural Paraguay (Caazapá, Itapúa interior) sufre cortes de
+  // 3G > 48hs frecuentes. _offlineBlock tapaba la app con licencia VÁLIDA.
+  // Para reactivar en Chat 6: borrar este return y descomentar el bloque.
+  return;
+  /* LÓGICA ORIGINAL — preservada para Chat 6
   const sub = state.subscription;
   if(!sub || !sub.lastValidated) return;
   const diasSinValidar = (Date.now() - new Date(sub.lastValidated).getTime()) / 86400000;
@@ -2427,9 +2607,18 @@ function _handleOffline(){
   } else if(diasSinValidar >= 1){
     state.subscription._offlineWarn = true;
   }
+  */
 }
 
 function enforceAccess(){
+  // CHAT 3.8.1: bloqueo neutralizado hasta Chat 6 (sistema suscripciones).
+  // Razón: app debe ser usable hoy mientras se construye base de clientes.
+  // Se preserva startTrial() para mantener telemetría (deviceId + fechas)
+  // que será re-aprovechada en Chat 6 sin pérdida de información.
+  // Para reactivar en Chat 6: borrar este bloque y descomentar la lógica.
+  if(!state.subscription) startTrial(); // preservar telemetría temporal
+  return;
+  /* LÓGICA ORIGINAL — preservada para Chat 6
   const sub = state.subscription;
   if(!sub) { startTrial(); return; }
 
@@ -2455,6 +2644,7 @@ function enforceAccess(){
     showToast("Sin conexión — validación pendiente");
     delete state.subscription._offlineWarn;
   }
+  */
 }
 
 function _renderBloqueo(msg){
@@ -2497,6 +2687,11 @@ function _renderWarningVencimiento(dias){
 
 // Guardia de escritura — bloquea acciones si está en solo lectura o bloqueado
 function _checkWriteAccess(){
+  // CHAT 3.8.1: bloqueo neutralizado hasta Chat 6 (sistema suscripciones).
+  // Razón: complementa neutralización de enforceAccess. Para reactivar en
+  // Chat 6: borrar este return y descomentar la lógica original.
+  return true;
+  /* LÓGICA ORIGINAL — preservada para Chat 6
   const sub = state.subscription;
   if(!sub) return true;
   if(sub._soloLectura){ showToast('Solo lectura — renovar licencia para editar'); return false; }
@@ -2508,6 +2703,7 @@ function _checkWriteAccess(){
   }
   if(sub._offlineBlock){ _renderBloqueo('Sin conexión hace más de 48hs.'); return false; }
   return true;
+  */
 }
 
 // ════════════════════════════════════════════════════════════
@@ -2605,11 +2801,12 @@ function calcCats(lista){
   lista.filter(m=>isGasto(m.tipo)&&!m.esTransferencia).forEach(m=>{ map[m.cat]=(map[m.cat]||0)+m.monto; });
   return Object.entries(map).sort((a,b)=>b[1]-a[1]);
 }
-function calcObra(id){
-  // Las transferencias interbancarias quedan en obra "General" y se excluyen
-  // FIX 3.6 #10: parche defensivo contra colisión de prefijos OB-1 vs OB-10.
-  // Match exacto o id seguido de espacio (formato real: "OB-001 Vivienda Rodríguez")
-  const om = state.movs.filter(m=>m.obra && (m.obra===id || m.obra.startsWith(id+" ")) && !m.eliminado && !m.esTransferencia);
+function calcObra(uuid){
+  // FIX 16 (Chat 3.7): match por UUID interno inmutable. Reemplaza el parche
+  // defensivo del Chat 3.6 (m.obra===id || startsWith) que era frágil ante
+  // edición del código display de la obra.
+  // Las transferencias interbancarias quedan en obra "General" y se excluyen.
+  const om = state.movs.filter(m=>m.obraUuid === uuid && !m.eliminado && !m.esTransferencia);
   const cobrado         = om.filter(m=>isCobro(m.tipo)).reduce((s,m)=>s+m.monto,0);
   const gastosPagados   = om.filter(m=>isGasto(m.tipo)&&m.estadoPago!=="PENDIENTE").reduce((s,m)=>s+m.monto,0);
   const gastosPendiente = om.filter(m=>isGasto(m.tipo)&&m.estadoPago==="PENDIENTE").reduce((s,m)=>s+m.monto,0);
@@ -2617,9 +2814,66 @@ function calcObra(id){
   return {cobrado, gastos, gastosPagados, gastosPendiente, neto:cobrado-gastos};
 }
 
+// ════════════════════════════════════════════════════════════
+//  IVA POR OBRA — FIX 17 + FIX 18 (Chat 3.7)
+//  IVA débito y crédito calculados sumando movimiento por movimiento.
+//  Cada mov puede sobrescribir iva_pct (override). Si no, hereda obra.
+//  IVA débito en cobros se calcula sobre monto_facturado_bruto (la
+//  factura emitida), no sobre monto cobrado neto. Esto es crítico para
+//  Resolución SET 90/21: el cliente retiene IVA al pagar, pero el
+//  débito declarado al fisco es el bruto facturado.
+//  genera_credito_fiscal=false fuerza que el gasto NO sume al crédito
+//  (típico de movs bancarios, transferencias, gastos sin factura).
+// ════════════════════════════════════════════════════════════
+function _tasaMov(m, o){
+  // Override por movimiento → obra → 10% por defecto
+  if(m && m.iva_pct !== undefined && m.iva_pct !== null && m.iva_pct !== ""){
+    return parseFloat(m.iva_pct)/100;
+  }
+  if(o && o.iva_pct !== undefined && o.iva_pct !== null && o.iva_pct !== ""){
+    return parseFloat(o.iva_pct)/100;
+  }
+  return 0.10;
+}
+
+function calcIvaObra(o){
+  // Recorre movs de la obra y suma IVA débito/crédito con tasaMov heredada.
+  // FIX 20 (Chat 3.8): IVA débito sobre monto_facturado_bruto.
+  // retencion_ire_monto y retencion_fuente_monto NO afectan el IVA débito
+  // (Ley 6380/19 arts. 84 y 86: retenciones de renta operan sobre la utilidad,
+  // no sobre el bruto facturado). Solo retencion_iva_monto es informativo
+  // para el F-120 — el débito al fisco sigue siendo sobre el bruto.
+  if(!o || !o.uuid) return {iva_debito:0, iva_credito:0};
+  let iva_debito = 0, iva_credito = 0;
+  state.movs.forEach(m=>{
+    if(m.eliminado || m.esTransferencia) return;
+    if(m.obraUuid !== o.uuid) return;
+    const tasa = _tasaMov(m, o);
+    if(tasa <= 0) return; // exento
+    const factor = tasa/(1+tasa);
+    if(isCobro(m.tipo)){
+      // FIX 18+20: IVA débito sobre bruto facturado (no neto cobrado, no
+      // ajustado por IRE ni Fuente). retencion_iva_monto, retencion_ire_monto
+      // y retencion_fuente_monto NO se restan al bruto para calcular el débito.
+      const bruto = (m.monto_facturado_bruto !== undefined && m.monto_facturado_bruto !== null)
+        ? m.monto_facturado_bruto
+        : m.monto;
+      iva_debito += (bruto||0) * factor;
+    } else if(isGasto(m.tipo)){
+      // FIX 17: solo suma al crédito si genera_credito_fiscal !== false
+      if(m.genera_credito_fiscal === false) return;
+      iva_credito += (m.monto||0) * factor;
+    }
+  });
+  return {
+    iva_debito:  Math.round(iva_debito),
+    iva_credito: Math.round(iva_credito),
+  };
+}
+
 // Metricas clave por obra (Sesion 4)
 function calcMetricasObra(o){
-  const c = calcObra(o.id);
+  const c = calcObra(o.uuid);
   const contrato = o.contrato||0;
   const utilidadReal = contrato - c.gastos;
   const margenReal   = contrato>0 ? utilidadReal/contrato : 0;
@@ -2675,10 +2929,10 @@ function invalidarCacheSaldo(){
 // Guardar referencia a la función raw antes de sobreescribir
 const _calcObraRaw = calcObra;
 // Sobreescribir calcObra con wrapper cacheado (misma firma pública)
-calcObra = function(id){
-  if(_cacheObras.has(id)) return _cacheObras.get(id);
-  const result = _calcObraRaw(id);
-  _cacheObras.set(id, result);
+calcObra = function(uuid){
+  if(_cacheObras.has(uuid)) return _cacheObras.get(uuid);
+  const result = _calcObraRaw(uuid);
+  _cacheObras.set(uuid, result);
   return result;
 };
 
@@ -2735,7 +2989,7 @@ function render(){
 
   // Caja proyectada global (suma de todas las obras)
   const cajaGlobal = state.obras.reduce((s,o)=>{
-    const cp = calcCajaProyectada(o.id);
+    const cp = calcCajaProyectada(o.uuid);
     return s + (cp||0);
   }, 0);
   const mcCajaProy = document.getElementById("mc-caja-proyectada");
@@ -2831,9 +3085,10 @@ function renderAllMovs(){
   const filtrosEl = document.getElementById("filtros-obra");
   if(filtrosEl){
     const activo = filtrosEl.dataset.filtro||"todos";
+    // FIX 16 (Chat 3.7): chip id ahora es UUID inmutable, label sigue siendo código display
     filtrosEl.innerHTML = [
       {id:"todos",label:"Todos"},
-      ...state.obras.map(o=>({id:o.id,label:o.id}))
+      ...state.obras.map(o=>({id:o.uuid,label:o.codigo||o.id}))
     ].map(f=>`
       <span onclick="filtrarObra('${f.id}')" style="
         padding:6px 14px;border-radius:99px;font-size:11px;font-weight:700;
@@ -2846,9 +3101,10 @@ function renderAllMovs(){
   }
 
   const filtro = filtrosEl?filtrosEl.dataset.filtro||"todos":"todos";
+  // FIX 16: filtro por obraUuid (filtro=uuid o "todos")
   const lista = filtro==="todos"
     ? sortMovs(state.movs)
-    : sortMovs(state.movs.filter(m=>m.obra&&(m.obra===filtro||m.obra.startsWith(filtro+" "))));
+    : sortMovs(state.movs.filter(m=>m.obraUuid === filtro));
 
   if(lista.length===0){
     el.innerHTML='<div class="empty" style="padding:50px 20px"><div class="empty-ico">📋</div><div class="empty-txt">Sin movimientos</div></div>';
@@ -2898,13 +3154,13 @@ function renderObras(){
     return;
   }
   el.innerHTML = state.obras.map(o=>{
-    const c = calcObra(o.id);
+    const c = calcObra(o.uuid);
     const pct = o.contrato>0?Math.min(c.cobrado/o.contrato,1):0;
     const pctG = o.contrato>0?Math.min(c.gastos/o.contrato,1):0;
     const badge = o.estado==="Finalizada"?"badge-fin":o.estado==="Activa"?"badge-act":"badge-pau";
-    const tasaIVA = (o.iva_pct !== undefined && o.iva_pct !== null && o.iva_pct !== "") ? parseFloat(o.iva_pct)/100 : 0.10;
-    const iva_debito  = tasaIVA>0 ? Math.round(c.cobrado/(1+tasaIVA)*tasaIVA) : 0;
-    const iva_credito = tasaIVA>0 ? Math.round(c.gastos/(1+tasaIVA)*tasaIVA) : 0;
+    // FIX 17 (Chat 3.7): IVA calculado mov a mov con tasa heredada/override
+    // FIX 18 (Chat 3.7): IVA débito sobre monto_facturado_bruto en cobros
+    const {iva_debito, iva_credito} = calcIvaObra(o);
     const credito_preobra = o.credito_preobra||0;
     const pos_iva = iva_debito - iva_credito - credito_preobra;
     const retenciones = o.etapas?o.etapas.reduce((s,e)=>s+(e.ret||0),0):0;
@@ -2920,7 +3176,7 @@ function renderObras(){
           <div class="obra-id">${o.id}${o.ruc?" · RUC "+o.ruc:""}</div>
           <div class="obra-nombre" style="display:flex;align-items:center">
           ${o.nombre}
-          ${obraInactiva(o.id)?'<span class="inactiva-dot" title="Sin actividad hace +30 dias"></span>':''}
+          ${obraInactiva(o.uuid)?'<span class="inactiva-dot" title="Sin actividad hace +30 dias"></span>':''}
         </div>
           <div class="obra-meta">${[o.ubicacion,o.tipo_obra,o.responsable?"Resp: "+o.responsable:""].filter(Boolean).join(" · ")}</div>
           <div class="obra-meta">${[o.fecha_inicio,o.fecha_fin].filter(Boolean).join(" → ")}</div>
@@ -2992,7 +3248,7 @@ function renderObras(){
 
       ${renderMetricasObra(o)}
 
-      <button class="btn-share-obra" onclick="compartirObra('${o.id}')" aria-label="Compartir estado de ${o.id}">
+      <button class="btn-share-obra" onclick="compartirObra('${o.uuid}')" aria-label="Compartir estado de ${o.id}">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
         Compartir estado
       </button>
@@ -3121,7 +3377,7 @@ function renderStats(cobrado,gastos,neto,mg){
   const max = cats.length>0?cats[0][1]:1;
 
   const obraStats = state.obras.map(o=>{
-    const c = calcObra(o.id);
+    const c = calcObra(o.uuid);
     const mg2 = c.cobrado>0?c.neto/c.cobrado:0;
     return `
     <div style="background:var(--card2);border-radius:12px;padding:12px;margin-bottom:8px">
@@ -3228,7 +3484,8 @@ function renderCXP(){
 
     <div id="cxp-lista">
     ${pendientes.map(m=>{
-      const obra = state.obras.find(o=>m.obra&&(m.obra===o.id||m.obra.startsWith(o.id+" ")));
+      // FIX 16 (Chat 3.7): match por obraUuid en lugar de prefijo de string
+      const obra = state.obras.find(o=>m.obraUuid && m.obraUuid === o.uuid);
       return `
       <div class="section" style="margin-bottom:10px" id="cxp-item-${m.id}">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
@@ -3589,7 +3846,8 @@ function renderAdminDatos(){
     <div class="papelera-count">${eliminados.length} movimiento${eliminados.length!==1?"s":""} eliminado${eliminados.length!==1?"s":""}</div>
     ${eliminados.map(m=>{
       const esC = isCobro(m.tipo);
-      const obra = state.obras.find(o=>m.obra&&(m.obra===o.id||m.obra.startsWith(o.id+" ")));
+      // FIX 16 (Chat 3.7): match por obraUuid
+      const obra = state.obras.find(o=>m.obraUuid && m.obraUuid === o.uuid);
       return `
       <div class="papelera-item" id="pap-${m.id}">
         <div class="papelera-header">
@@ -3687,6 +3945,17 @@ function openModal(tipo){
     if(lblBanco) lblBanco.textContent = "Cuenta bancaria";
     const sBancoDest = document.getElementById("f-banco-destino");
     if(sBancoDest) sBancoDest.value = "";
+    // FIX 20 (Chat 3.8): reset de todos los campos retención SET y IVA override
+    // (evita arrastre de valores tras editar un cobro previo).
+    const _resetIds = [
+      "f-iva-override",
+      "f-monto-bruto","f-retencion-iva","f-retencion-ire","f-retencion-fuente",
+      "f-retencion-iva-pct","f-retencion-ire-pct"
+    ];
+    _resetIds.forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.value = "";
+    });
     initPagoSwitch();
     setTimeout(()=>document.getElementById("f-monto").focus(),400);
   }
@@ -3738,6 +4007,10 @@ function selTipo(el){
     if(lblBanco)  lblBanco.textContent = "Cuenta bancaria";
   }
 
+  // FIX 18 (Chat 3.7): bloque retención SET solo visible en cobros
+  const fgRet = document.getElementById("fg-retencion-cobro");
+  if(fgRet) fgRet.style.display = isCobro(tipoSel) ? "block" : "none";
+
   // Mostrar switch de pago solo para gastos
   initPagoSwitch();
 }
@@ -3747,9 +4020,11 @@ function populateSelects(){
   const sBanco = document.getElementById("f-banco");
   const sBancoDest = document.getElementById("f-banco-destino");
   if(sObra){
+    // FIX 16 (Chat 3.7): el value del select es el UUID inmutable.
+    // Sentinela "GENERAL" para movs sin obra real.
     sObra.innerHTML = [
-      '<option value="General">Sin obra · General</option>',
-      ...state.obras.map(o=>`<option value="${o.id} ${o.nombre}">${o.id} · ${o.nombre}</option>`)
+      '<option value="GENERAL">Sin obra · General</option>',
+      ...state.obras.map(o=>`<option value="${o.uuid}">${o.codigo||o.id} · ${o.nombre}</option>`)
     ].join("");
   }
   if(sBanco){
@@ -3811,6 +4086,7 @@ function guardarMov(){
         tipo:            "Transferencia",
         obra:            "General",
         obraId:          "General",
+        obraUuid:        "GENERAL",
         cat:             "Movimiento bancario",
         banco:           bancoOrigen,
         bancoId:         bancoOrigen,
@@ -3822,6 +4098,7 @@ function guardarMov(){
         eliminado:       false,
         createdAt:       ahora,
         usuarioId,
+        genera_credito_fiscal: false,
       };
       const movIn = {
         id:              refId+"-IN",
@@ -3832,6 +4109,7 @@ function guardarMov(){
         tipo:            "Movimiento bancario",
         obra:            "General",
         obraId:          "General",
+        obraUuid:        "GENERAL",
         cat:             "Movimiento bancario",
         banco:           bancoDestino,
         bancoId:         bancoDestino,
@@ -3843,6 +4121,7 @@ function guardarMov(){
         eliminado:       false,
         createdAt:       ahora,
         usuarioId,
+        genera_credito_fiscal: false,
       };
       state.movs.push(movOut, movIn);
       saveState();
@@ -3882,15 +4161,75 @@ function guardarMov(){
 
   // ── RAMA NORMAL (gastos, cobros, mov. bancario, etc.) ──────
   const esGastoTipo = ["Gasto","Pago proveedor","Mano de obra"].includes(tipoSel);
+  const esCobro     = isCobro(tipoSel);
   const estadoPago  = esGastoTipo ? (pagadoAhora ? "PAGADO" : "PENDIENTE") : "PAGADO";
   const ahora       = new Date().toISOString();
+
+  // FIX 16 (Chat 3.7): el value del select es UUID; resolver display y código
+  const obraUuidSel = document.getElementById("f-obra").value;
+  let obraDisplay = "General";
+  let obraCodigo  = "General";
+  if(obraUuidSel && obraUuidSel !== "GENERAL"){
+    const oref = state.obras.find(x=>x.uuid===obraUuidSel);
+    if(oref){
+      obraCodigo  = oref.codigo || oref.id;
+      obraDisplay = (oref.codigo||oref.id) + " " + (oref.nombre||"");
+    }
+  }
+
+  // FIX 17 (Chat 3.7): IVA override por movimiento (opcional)
+  const ivaOverrideRaw = document.getElementById("f-iva-override")?.value;
+  const ivaOverride = (ivaOverrideRaw && ivaOverrideRaw !== "")
+    ? ivaOverrideRaw // string para preservar "0", "5", "10"
+    : undefined;
+
+  // FIX 17: genera_credito_fiscal — default por tipo
+  const generaCredito = (tipoSel === "Movimiento bancario" || tipoSel === "Transferencia")
+    ? false
+    : (esGastoTipo ? true : false);
+
+  // FIX 20 (Chat 3.8): retenciones SET desagregadas (IVA/IRE/Fuente)
+  // Identidad: monto_facturado_bruto = monto + retencion_iva_monto
+  //              + retencion_ire_monto + retencion_fuente_monto
+  // IVA débito se calcula sobre monto_facturado_bruto. IRE y Fuente NO suman al IVA.
+  let monto_facturado_bruto, retencion_iva_monto, retencion_iva_pct,
+      retencion_ire_monto, retencion_ire_pct, retencion_fuente_monto;
+  if(esCobro){
+    const brutoRaw  = document.getElementById("f-monto-bruto")?.value;
+    const retIvaRaw = document.getElementById("f-retencion-iva")?.value;
+    const retIreRaw = document.getElementById("f-retencion-ire")?.value;
+    const retFteRaw = document.getElementById("f-retencion-fuente")?.value;
+    const ivaPctRaw = document.getElementById("f-retencion-iva-pct")?.value;
+    const irePctRaw = document.getElementById("f-retencion-ire-pct")?.value;
+
+    const bruto  = brutoRaw  ? parseMonto(brutoRaw)  : 0;
+    const retIva = retIvaRaw ? parseMonto(retIvaRaw) : 0;
+    const retIre = retIreRaw ? parseMonto(retIreRaw) : 0;
+    const retFte = retFteRaw ? parseMonto(retFteRaw) : 0;
+
+    if(bruto > 0){
+      monto_facturado_bruto = bruto;
+      retencion_iva_monto    = retIva;
+      retencion_ire_monto    = retIre;
+      retencion_fuente_monto = retFte;
+    } else {
+      // Sin captura de retención: bruto = monto cobrado neto, todas las retenciones 0
+      monto_facturado_bruto  = monto;
+      retencion_iva_monto    = 0;
+      retencion_ire_monto    = 0;
+      retencion_fuente_monto = 0;
+    }
+    retencion_iva_pct = ivaPctRaw ? Number(ivaPctRaw) : 0;
+    retencion_ire_pct = irePctRaw ? Number(irePctRaw) : 0;
+  }
 
   const mov = {
     id:         editId || _genUUID(),
     fecha:      document.getElementById("f-fecha").value||today(),
     tipo:       tipoSel,
-    obra:       document.getElementById("f-obra").value,
-    obraId:     document.getElementById("f-obra").value.split(" ")[0],
+    obra:       obraDisplay,
+    obraId:     obraCodigo,
+    obraUuid:   obraUuidSel || "GENERAL",
     cat:        document.getElementById("f-cat").value,
     banco:      estadoPago === "PAGADO" ? document.getElementById("f-banco").value : "",
     bancoId:    estadoPago === "PAGADO" ? document.getElementById("f-banco").value : "",
@@ -3903,7 +4242,19 @@ function guardarMov(){
     createdAt:  editId ? (state.movs.find(m => m.id === editId)?.createdAt || ahora) : ahora,
     editadoEl:  editId ? ahora : undefined,
     usuarioId:  state.empresa?.usuario||"Admin",
+    // FIX 17
+    iva_pct:               ivaOverride,
+    genera_credito_fiscal: generaCredito,
   };
+  // FIX 20 (Chat 3.8): campos retención SET desagregados solo en cobros
+  if(esCobro){
+    mov.monto_facturado_bruto  = monto_facturado_bruto;
+    mov.retencion_iva_monto    = retencion_iva_monto;
+    mov.retencion_iva_pct      = retencion_iva_pct;
+    mov.retencion_ire_monto    = retencion_ire_monto;
+    mov.retencion_ire_pct      = retencion_ire_pct;
+    mov.retencion_fuente_monto = retencion_fuente_monto;
+  }
 
   if(editId){
     const idx = state.movs.findIndex(m=>m.id===editId);
@@ -3940,9 +4291,36 @@ function editMov(id){
   document.querySelectorAll(".tipo-btn").forEach(b=>{
     b.classList.toggle("sel",b.dataset.t===m.tipo);
   });
+  // FIX 17 (Chat 3.7): restaurar IVA override
+  const fiv = document.getElementById("f-iva-override");
+  if(fiv) fiv.value = (m.iva_pct !== undefined && m.iva_pct !== null && m.iva_pct !== "") ? String(m.iva_pct) : "";
+  // FIX 20 (Chat 3.8): restaurar retenciones SET desagregadas en cobros
+  const fmb = document.getElementById("f-monto-bruto");
+  const fri = document.getElementById("f-retencion-iva");
+  const fre = document.getElementById("f-retencion-ire");
+  const frf = document.getElementById("f-retencion-fuente");
+  const fivpct = document.getElementById("f-retencion-iva-pct");
+  const firpct = document.getElementById("f-retencion-ire-pct");
+  const fmt = (v) => (v !== undefined && v !== null && v > 0)
+    ? new Intl.NumberFormat("es-PY").format(v) : "";
+  if(fmb) fmb.value = (m.monto_facturado_bruto !== undefined && m.monto_facturado_bruto !== null)
+    ? new Intl.NumberFormat("es-PY").format(m.monto_facturado_bruto) : "";
+  // Tolerar legacy retencion_iva (v3) → retencion_iva_monto (v4)
+  const retIvaVal = (m.retencion_iva_monto !== undefined && m.retencion_iva_monto !== null)
+    ? m.retencion_iva_monto
+    : (m.retencion_iva !== undefined && m.retencion_iva !== null ? m.retencion_iva : 0);
+  if(fri) fri.value = fmt(retIvaVal);
+  if(fre) fre.value = fmt(m.retencion_ire_monto);
+  if(frf) frf.value = fmt(m.retencion_fuente_monto);
+  if(fivpct) fivpct.value = (m.retencion_iva_pct !== undefined && m.retencion_iva_pct !== null && m.retencion_iva_pct > 0)
+    ? String(m.retencion_iva_pct) : "";
+  if(firpct) firpct.value = (m.retencion_ire_pct !== undefined && m.retencion_ire_pct !== null && m.retencion_ire_pct > 0)
+    ? String(m.retencion_ire_pct) : "";
+
   setTimeout(()=>{
     const so=document.getElementById("f-obra");
-    if(so) so.value=m.obra||"General";
+    // FIX 16 (Chat 3.7): el select usa uuid; setear desde m.obraUuid
+    if(so) so.value = m.obraUuid || "GENERAL";
     const sb=document.getElementById("f-banco");
     if(sb) sb.value=m.banco||"";
     const sc=document.getElementById("f-cat");
@@ -3983,10 +4361,28 @@ function deleteMov(id){
 // ════════════════════════════════════════════════════════════
 function guardarObra(){
   if(!_checkWriteAccess()) return;
-  const id = document.getElementById("fo-id").value.trim().toUpperCase();
-  if(!id){ document.getElementById("fo-id").focus(); return; }
+  const codigo = document.getElementById("fo-id").value.trim().toUpperCase();
+  if(!codigo){ document.getElementById("fo-id").focus(); return; }
+
+  // FIX 16 (Chat 3.7): upsert por UUID, no por código display
+  // El hidden field fo-uuid se setea en editarObra(); en alta queda vacío.
+  const editUuid = (document.getElementById("fo-uuid")?.value || "").trim();
+
+  // Si es edición y existe la obra, mantener uuid; si es alta, generar UUID nuevo
+  let existingIdx = -1;
+  if(editUuid){
+    existingIdx = state.obras.findIndex(x=>x.uuid===editUuid);
+  } else {
+    // Compat alta: si el código coincide con uno existente, sobrescribir (comportamiento legacy)
+    existingIdx = state.obras.findIndex(x=>(x.codigo||x.id)===codigo);
+  }
+
+  const uuid = editUuid || (existingIdx>=0 ? state.obras[existingIdx].uuid : _genUUID());
+
   const o = {
-    id,
+    uuid,
+    id:          codigo,    // legacy: muchos lugares aún usan o.id como display
+    codigo,                 // canónico para display/edición
     nombre:     document.getElementById("fo-nombre").value.trim(),
     cliente:    document.getElementById("fo-cliente").value.trim(),
     ruc:        document.getElementById("fo-ruc").value.trim(),
@@ -3999,11 +4395,16 @@ function guardarObra(){
     fecha_fin:  document.getElementById("fo-fin").value,
     estado:     document.getElementById("fo-estado").value,
     credito_preobra: parseMonto(document.getElementById("fo-credito").value),
-    etapas: [],
+    etapas: existingIdx>=0 ? (state.obras[existingIdx].etapas||[]) : [],
   };
-  const existing = state.obras.findIndex(x=>x.id===id);
-  if(existing>=0) state.obras[existing]=o;
+
+  if(existingIdx>=0) state.obras[existingIdx] = o;
   else state.obras.push(o);
+
+  // Limpiar hidden uuid después de guardar
+  const fuh = document.getElementById("fo-uuid");
+  if(fuh) fuh.value = "";
+
   saveState();
   closeModal("modal-obra");
   render();
@@ -4658,10 +5059,10 @@ function confirmarAccion(btnId, accion){
 // ════════════════════════════════════════════════════════════
 //  INACTIVIDAD DE OBRA (punto naranja)
 // ════════════════════════════════════════════════════════════
-function obraInactiva(obraId){
-  const movs = state.movs.filter(m => m.obra && (m.obra===obraId||m.obra.startsWith(obraId+" ")) && !m.eliminado);
+function obraInactiva(uuid){
+  const movs = state.movs.filter(m => m.obraUuid === uuid && !m.eliminado);
   if(movs.length === 0){
-    const o = (state.obras||[]).find(ob => ob.id === obraId);
+    const o = (state.obras||[]).find(ob => ob.uuid === uuid);
     if(!o?.fecha_inicio) return false;
     return Math.floor((new Date() - new Date(o.fecha_inicio)) / 86400000) > 30;
   }
@@ -4690,10 +5091,10 @@ function ocultarSkeleton(containerId){
 // ── S5.1: Caja proyectada por obra ──────────────────────────
 // Caja proyectada = Saldo actual bancos + (Contrato - Cobrado) - Gastos PENDIENTE
 // Sesión 7: usa getSaldoTotalCached() para no recalcular bancos N veces por render
-function calcCajaProyectada(obraId){
-  const o = state.obras.find(x=>x.id===obraId);
+function calcCajaProyectada(uuid){
+  const o = state.obras.find(x=>x.uuid===uuid);
   if(!o) return null;
-  const c = calcObra(obraId);
+  const c = calcObra(uuid);
   const porCobrar  = Math.max(0, (o.contrato||0) - c.cobrado);
   const pendientes = c.gastosPendiente;
   const saldoBancos = getSaldoTotalCached(); // cache — no recalcula en cada obra
@@ -4719,9 +5120,9 @@ function calcDiscrepanciasBancos(){
 // Obras donde gastos > 80% del contrato (semáforo rojo)
 function getObrasEnAlerta(){
   return state.obras.map(o=>{
-    const c = calcObra(o.id);
+    const c = calcObra(o.uuid);
     const riesgo = o.contrato>0 ? c.gastos/o.contrato : 0;
-    const cajaProyectada = calcCajaProyectada(o.id);
+    const cajaProyectada = calcCajaProyectada(o.uuid);
     return {o, c, riesgo, cajaProyectada};
   }).filter(x=> x.riesgo>=0.80 || (x.cajaProyectada!==null && x.cajaProyectada<0));
 }
@@ -4917,7 +5318,17 @@ function guardarSilencioso(){
 }
 
 // ── Datos demo aspiracionales ────────────────────────────
+// CHAT 3.8.1: DEMO_STATE re-escrito en schema v4 nativo.
+// Antes: schema v3 implícito, disparaba migraciones encadenadas en vivo.
+// Ahora: pre-migrado en v4. Incluye 3 escenarios fiscales reales:
+//   - Cobro con retención IVA 30% (Res. SET 90/21 caso típico).
+//   - Cobro con retención IVA 100% (proveedor del Estado).
+//   - Gasto sin crédito fiscal (proveedor sin RUC formal).
+//   - Par de transferencias entre cuentas (refId espejo, esTransferencia).
+//   - 1 cobro PENDIENTE (porCobrar visible en dashboard).
+//   - 1 pago a proveedor PENDIENTE (CXP visible).
 const DEMO_STATE = {
+  schemaVersion:    4,
   empresa:          { nombre:"CONSTRUCTORA DEMO SRL", ruc:"80000001-1", usuario:"Admin" },
   moneda_principal: "GS",
   configured:       true,
@@ -4929,32 +5340,216 @@ const DEMO_STATE = {
     { id:"banco_demo_2", nombre:"Caja Chica Obra", tipo:"Caja de ahorro",     saldo_inicial: 8000000 },
   ],
   obras: [
-    { id:"OB-001", nombre:"Vivienda Rodríguez",       cliente:"Carlos Rodríguez", ruc:"3500000-1",
-      contrato:280000000, iva_pct:"10", ubicacion:"Encarnación",     tipo_obra:"Vivienda unifamiliar",
-      responsable:"Admin", fecha_inicio:"2026-01-15", fecha_fin:"2026-06-30", estado:"Activa", credito_preobra:0, etapas:[] },
-    { id:"OB-002", nombre:"Local Comercial Centro",   cliente:"María García",    ruc:"2800000-2",
-      contrato:160000000, iva_pct:"10", ubicacion:"Ciudad del Este", tipo_obra:"Local comercial",
-      responsable:"Admin", fecha_inicio:"2026-02-01", fecha_fin:"2026-05-15", estado:"Activa", credito_preobra:0, etapas:[] },
-    { id:"OB-003", nombre:"Depósito Industrial Caazapá", cliente:"Agro Sur SA", ruc:"80050001-3",
-      contrato:420000000, iva_pct:"10", ubicacion:"Caazapá",         tipo_obra:"Depósito industrial",
-      responsable:"Admin", fecha_inicio:"2025-11-01", fecha_fin:"2026-07-30", estado:"Activa", credito_preobra:12000000, etapas:[] },
+    { id:"OB-001", uuid:"a1b2c3d4-0001-4001-8001-000000000001", codigo:"OB-001",
+      nombre:"Vivienda Rodríguez", cliente:"Carlos Rodríguez", ruc:"3500000-1",
+      contrato:280000000, iva_pct:"10", tasaIVA:10, ubicacion:"Encarnación",
+      tipo_obra:"Vivienda unifamiliar", responsable:"Admin",
+      fecha_inicio:"2026-01-15", fecha_fin:"2026-06-30",
+      estado:"Activa", credito_preobra:0, etapas:[] },
+    { id:"OB-002", uuid:"a1b2c3d4-0002-4002-8002-000000000002", codigo:"OB-002",
+      nombre:"Local Comercial Centro", cliente:"María García", ruc:"2800000-2",
+      contrato:160000000, iva_pct:"10", tasaIVA:10, ubicacion:"Ciudad del Este",
+      tipo_obra:"Local comercial", responsable:"Admin",
+      fecha_inicio:"2026-02-01", fecha_fin:"2026-05-15",
+      estado:"Activa", credito_preobra:0, etapas:[] },
+    { id:"OB-003", uuid:"a1b2c3d4-0003-4003-8003-000000000003", codigo:"OB-003",
+      nombre:"Depósito Industrial Caazapá", cliente:"Agro Sur SA", ruc:"80050001-3",
+      contrato:420000000, iva_pct:"10", tasaIVA:10, ubicacion:"Caazapá",
+      tipo_obra:"Depósito industrial", responsable:"Admin",
+      fecha_inicio:"2025-11-01", fecha_fin:"2026-07-30",
+      estado:"Activa", credito_preobra:12000000, etapas:[] },
   ],
   movs: [
-    { id:90001, fecha:"2026-01-15", tipo:"Cobro",          obra:"OB-001 Vivienda Rodríguez",          obraId:"OB-001", cat:"Cobro cliente",         banco:"banco_demo_1", desc:"Anticipo 30%",             monto:84000000,  forma:"Transferencia", estadoPago:"PAGADO",    eliminado:false },
-    { id:90002, fecha:"2026-02-10", tipo:"Gasto",          obra:"OB-001 Vivienda Rodríguez",          obraId:"OB-001", cat:"Materiales",            banco:"banco_demo_1", desc:"Hierro y cemento",         monto:38000000,  forma:"Transferencia", estadoPago:"PAGADO",    eliminado:false },
-    { id:90003, fecha:"2026-02-20", tipo:"Mano de obra",   obra:"OB-001 Vivienda Rodríguez",          obraId:"OB-001", cat:"Mano de Obra",          banco:"banco_demo_2", desc:"Personal feb.",            monto:12000000,  forma:"Efectivo",      estadoPago:"PAGADO",    eliminado:false },
-    { id:90004, fecha:"2026-03-05", tipo:"Cobro",          obra:"OB-001 Vivienda Rodríguez",          obraId:"OB-001", cat:"Cobro cliente",         banco:"banco_demo_1", desc:"Certificación 1",         monto:56000000,  forma:"Transferencia", estadoPago:"PAGADO",    eliminado:false },
-    { id:90005, fecha:"2026-03-15", tipo:"Pago proveedor", obra:"OB-001 Vivienda Rodríguez",          obraId:"OB-001", cat:"Subcontratistas",       banco:"",            desc:"Electricista — factura",  monto:18000000,  forma:"Transferencia", estadoPago:"PENDIENTE", eliminado:false },
-    { id:90006, fecha:"2026-02-01", tipo:"Cobro",          obra:"OB-002 Local Comercial Centro",      obraId:"OB-002", cat:"Cobro cliente",         banco:"banco_demo_1", desc:"Anticipo 40%",             monto:64000000,  forma:"Transferencia", estadoPago:"PAGADO",    eliminado:false },
-    { id:90007, fecha:"2026-02-15", tipo:"Gasto",          obra:"OB-002 Local Comercial Centro",      obraId:"OB-002", cat:"Materiales",            banco:"banco_demo_1", desc:"Bloque y arena",           monto:22000000,  forma:"Transferencia", estadoPago:"PAGADO",    eliminado:false },
-    { id:90008, fecha:"2026-03-01", tipo:"Mano de obra",   obra:"OB-002 Local Comercial Centro",      obraId:"OB-002", cat:"Mano de Obra",          banco:"banco_demo_2", desc:"Personal mar.",            monto: 9500000,  forma:"Efectivo",      estadoPago:"PAGADO",    eliminado:false },
-    { id:90009, fecha:"2026-03-20", tipo:"Gasto",          obra:"OB-002 Local Comercial Centro",      obraId:"OB-002", cat:"Gastos Administrativos",banco:"banco_demo_1", desc:"Planos y permisos",        monto: 4200000,  forma:"Transferencia", estadoPago:"PAGADO",    eliminado:false },
-    { id:90010, fecha:"2025-11-01", tipo:"Cobro",          obra:"OB-003 Depósito Industrial Caazapá", obraId:"OB-003", cat:"Cobro cliente",         banco:"banco_demo_1", desc:"Anticipo 25%",             monto:105000000, forma:"Transferencia", estadoPago:"PAGADO",    eliminado:false },
-    { id:90011, fecha:"2025-11-20", tipo:"Gasto",          obra:"OB-003 Depósito Industrial Caazapá", obraId:"OB-003", cat:"Materiales",            banco:"banco_demo_1", desc:"Estructura metálica",     monto:68000000,  forma:"Transferencia", estadoPago:"PAGADO",    eliminado:false },
-    { id:90012, fecha:"2025-12-10", tipo:"Mano de obra",   obra:"OB-003 Depósito Industrial Caazapá", obraId:"OB-003", cat:"Mano de Obra",          banco:"banco_demo_2", desc:"Personal nov-dic",        monto:24000000,  forma:"Efectivo",      estadoPago:"PAGADO",    eliminado:false },
-    { id:90013, fecha:"2026-01-15", tipo:"Cobro",          obra:"OB-003 Depósito Industrial Caazapá", obraId:"OB-003", cat:"Cobro cliente",         banco:"banco_demo_1", desc:"Certificación 1",         monto:84000000,  forma:"Transferencia", estadoPago:"PAGADO",    eliminado:false },
-    { id:90014, fecha:"2026-02-05", tipo:"Pago proveedor", obra:"OB-003 Depósito Industrial Caazapá", obraId:"OB-003", cat:"Subcontratistas",       banco:"banco_demo_1", desc:"Techista",                monto:31000000,  forma:"Transferencia", estadoPago:"PAGADO",    eliminado:false },
-    { id:90015, fecha:"2026-03-10", tipo:"Gasto",          obra:"OB-003 Depósito Industrial Caazapá", obraId:"OB-003", cat:"Materiales",            banco:"",            desc:"Chapas — pendiente pago", monto:42000000,  forma:"Transferencia", estadoPago:"PENDIENTE", eliminado:false },
+    // ── OB-001 Vivienda Rodríguez ─────────────────────────────
+    { id:"d4e5f6a7-9001-4901-8901-000000090001", fecha:"2026-01-15",
+      tipo:"Cobro", obra:"OB-001 Vivienda Rodríguez", obraId:"OB-001",
+      obraUuid:"a1b2c3d4-0001-4001-8001-000000000001",
+      cat:"Cobro cliente", banco:"banco_demo_1", desc:"Anticipo 30%",
+      monto:84000000, forma:"Transferencia", estadoPago:"PAGADO",
+      monto_facturado_bruto:84000000,
+      retencion_iva_monto:0, retencion_iva_pct:0,
+      retencion_ire_monto:0, retencion_ire_pct:0,
+      retencion_fuente_monto:0,
+      iva_pct:10, genera_credito_fiscal:false,
+      eliminado:false },
+
+    { id:"d4e5f6a7-9002-4902-8902-000000090002", fecha:"2026-02-10",
+      tipo:"Gasto", obra:"OB-001 Vivienda Rodríguez", obraId:"OB-001",
+      obraUuid:"a1b2c3d4-0001-4001-8001-000000000001",
+      cat:"Materiales", banco:"banco_demo_1", desc:"Hierro y cemento (con factura)",
+      monto:38000000, forma:"Transferencia", estadoPago:"PAGADO",
+      iva_pct:10, genera_credito_fiscal:true,
+      eliminado:false },
+
+    { id:"d4e5f6a7-9003-4903-8903-000000090003", fecha:"2026-02-20",
+      tipo:"Mano de obra", obra:"OB-001 Vivienda Rodríguez", obraId:"OB-001",
+      obraUuid:"a1b2c3d4-0001-4001-8001-000000000001",
+      cat:"Mano de Obra", banco:"banco_demo_2", desc:"Personal feb.",
+      monto:12000000, forma:"Efectivo", estadoPago:"PAGADO",
+      iva_pct:0, genera_credito_fiscal:false,
+      eliminado:false },
+
+    // Cobro CON retención IVA 30% — caso típico cliente RUC empresarial
+    // bruto 56M × 10% IVA × 30% retención = 1.680.000 retenido
+    // cobrado neto = 56.000.000 - 1.680.000 = 54.320.000
+    { id:"d4e5f6a7-9004-4904-8904-000000090004", fecha:"2026-03-05",
+      tipo:"Cobro", obra:"OB-001 Vivienda Rodríguez", obraId:"OB-001",
+      obraUuid:"a1b2c3d4-0001-4001-8001-000000000001",
+      cat:"Cobro cliente", banco:"banco_demo_1",
+      desc:"Certificación 1 (cliente retiene 30% IVA)",
+      monto:54320000, forma:"Transferencia", estadoPago:"PAGADO",
+      monto_facturado_bruto:56000000,
+      retencion_iva_monto:1680000, retencion_iva_pct:30,
+      retencion_ire_monto:0, retencion_ire_pct:0,
+      retencion_fuente_monto:0,
+      iva_pct:10, genera_credito_fiscal:false,
+      eliminado:false },
+
+    // Pago a proveedor PENDIENTE — visible en CXP del dashboard
+    { id:"d4e5f6a7-9005-4905-8905-000000090005", fecha:"2026-03-15",
+      tipo:"Pago proveedor", obra:"OB-001 Vivienda Rodríguez", obraId:"OB-001",
+      obraUuid:"a1b2c3d4-0001-4001-8001-000000000001",
+      cat:"Subcontratistas", banco:"", desc:"Electricista — factura a 30 días",
+      monto:18000000, forma:"Transferencia", estadoPago:"PENDIENTE",
+      iva_pct:10, genera_credito_fiscal:true,
+      eliminado:false },
+
+    // ── OB-002 Local Comercial Centro ─────────────────────────
+    { id:"d4e5f6a7-9006-4906-8906-000000090006", fecha:"2026-02-01",
+      tipo:"Cobro", obra:"OB-002 Local Comercial Centro", obraId:"OB-002",
+      obraUuid:"a1b2c3d4-0002-4002-8002-000000000002",
+      cat:"Cobro cliente", banco:"banco_demo_1", desc:"Anticipo 40%",
+      monto:64000000, forma:"Transferencia", estadoPago:"PAGADO",
+      monto_facturado_bruto:64000000,
+      retencion_iva_monto:0, retencion_iva_pct:0,
+      retencion_ire_monto:0, retencion_ire_pct:0,
+      retencion_fuente_monto:0,
+      iva_pct:10, genera_credito_fiscal:false,
+      eliminado:false },
+
+    { id:"d4e5f6a7-9007-4907-8907-000000090007", fecha:"2026-02-15",
+      tipo:"Gasto", obra:"OB-002 Local Comercial Centro", obraId:"OB-002",
+      obraUuid:"a1b2c3d4-0002-4002-8002-000000000002",
+      cat:"Materiales", banco:"banco_demo_1", desc:"Bloque y arena",
+      monto:22000000, forma:"Transferencia", estadoPago:"PAGADO",
+      iva_pct:10, genera_credito_fiscal:true,
+      eliminado:false },
+
+    { id:"d4e5f6a7-9008-4908-8908-000000090008", fecha:"2026-03-01",
+      tipo:"Mano de obra", obra:"OB-002 Local Comercial Centro", obraId:"OB-002",
+      obraUuid:"a1b2c3d4-0002-4002-8002-000000000002",
+      cat:"Mano de Obra", banco:"banco_demo_2", desc:"Personal mar.",
+      monto:9500000, forma:"Efectivo", estadoPago:"PAGADO",
+      iva_pct:0, genera_credito_fiscal:false,
+      eliminado:false },
+
+    { id:"d4e5f6a7-9009-4909-8909-000000090009", fecha:"2026-03-20",
+      tipo:"Gasto", obra:"OB-002 Local Comercial Centro", obraId:"OB-002",
+      obraUuid:"a1b2c3d4-0002-4002-8002-000000000002",
+      cat:"Gastos Administrativos", banco:"banco_demo_1",
+      desc:"Planos y permisos municipales",
+      monto:4200000, forma:"Transferencia", estadoPago:"PAGADO",
+      iva_pct:10, genera_credito_fiscal:true,
+      eliminado:false },
+
+    // Cobro PENDIENTE — visible en "Por cobrar" del dashboard
+    { id:"d4e5f6a7-9016-4916-8916-000000090016", fecha:"2026-04-10",
+      tipo:"Cobro", obra:"OB-002 Local Comercial Centro", obraId:"OB-002",
+      obraUuid:"a1b2c3d4-0002-4002-8002-000000000002",
+      cat:"Cobro cliente", banco:"", desc:"Certificación 2 — pendiente cobro",
+      monto:32000000, forma:"Transferencia", estadoPago:"PENDIENTE",
+      monto_facturado_bruto:32000000,
+      retencion_iva_monto:0, retencion_iva_pct:0,
+      retencion_ire_monto:0, retencion_ire_pct:0,
+      retencion_fuente_monto:0,
+      iva_pct:10, genera_credito_fiscal:false,
+      eliminado:false },
+
+    // ── OB-003 Depósito Industrial Caazapá ────────────────────
+    { id:"d4e5f6a7-9010-4910-8910-000000090010", fecha:"2025-11-01",
+      tipo:"Cobro", obra:"OB-003 Depósito Industrial Caazapá", obraId:"OB-003",
+      obraUuid:"a1b2c3d4-0003-4003-8003-000000000003",
+      cat:"Cobro cliente", banco:"banco_demo_1", desc:"Anticipo 25%",
+      monto:105000000, forma:"Transferencia", estadoPago:"PAGADO",
+      monto_facturado_bruto:105000000,
+      retencion_iva_monto:0, retencion_iva_pct:0,
+      retencion_ire_monto:0, retencion_ire_pct:0,
+      retencion_fuente_monto:0,
+      iva_pct:10, genera_credito_fiscal:false,
+      eliminado:false },
+
+    { id:"d4e5f6a7-9011-4911-8911-000000090011", fecha:"2025-11-20",
+      tipo:"Gasto", obra:"OB-003 Depósito Industrial Caazapá", obraId:"OB-003",
+      obraUuid:"a1b2c3d4-0003-4003-8003-000000000003",
+      cat:"Materiales", banco:"banco_demo_1",
+      desc:"Estructura metálica (proveedor sin RUC — sin factura)",
+      monto:68000000, forma:"Transferencia", estadoPago:"PAGADO",
+      iva_pct:0, genera_credito_fiscal:false,
+      eliminado:false },
+
+    { id:"d4e5f6a7-9012-4912-8912-000000090012", fecha:"2025-12-10",
+      tipo:"Mano de obra", obra:"OB-003 Depósito Industrial Caazapá", obraId:"OB-003",
+      obraUuid:"a1b2c3d4-0003-4003-8003-000000000003",
+      cat:"Mano de Obra", banco:"banco_demo_2", desc:"Personal nov-dic",
+      monto:24000000, forma:"Efectivo", estadoPago:"PAGADO",
+      iva_pct:0, genera_credito_fiscal:false,
+      eliminado:false },
+
+    // Cobro CON retención IVA 100% — Res. SET 90/21 (proveedor del Estado)
+    // bruto 84M × 10% IVA × 100% retención = 8.400.000 retenido
+    // cobrado neto = 84.000.000 - 8.400.000 = 75.600.000
+    { id:"d4e5f6a7-9013-4913-8913-000000090013", fecha:"2026-01-15",
+      tipo:"Cobro", obra:"OB-003 Depósito Industrial Caazapá", obraId:"OB-003",
+      obraUuid:"a1b2c3d4-0003-4003-8003-000000000003",
+      cat:"Cobro cliente", banco:"banco_demo_1",
+      desc:"Certificación 1 (Res. 90/21 — retención IVA 100%)",
+      monto:75600000, forma:"Transferencia", estadoPago:"PAGADO",
+      monto_facturado_bruto:84000000,
+      retencion_iva_monto:8400000, retencion_iva_pct:100,
+      retencion_ire_monto:0, retencion_ire_pct:0,
+      retencion_fuente_monto:0,
+      iva_pct:10, genera_credito_fiscal:false,
+      eliminado:false },
+
+    { id:"d4e5f6a7-9014-4914-8914-000000090014", fecha:"2026-02-05",
+      tipo:"Pago proveedor", obra:"OB-003 Depósito Industrial Caazapá", obraId:"OB-003",
+      obraUuid:"a1b2c3d4-0003-4003-8003-000000000003",
+      cat:"Subcontratistas", banco:"banco_demo_1", desc:"Techista (con factura)",
+      monto:31000000, forma:"Transferencia", estadoPago:"PAGADO",
+      iva_pct:10, genera_credito_fiscal:true,
+      eliminado:false },
+
+    { id:"d4e5f6a7-9015-4915-8915-000000090015", fecha:"2026-03-10",
+      tipo:"Gasto", obra:"OB-003 Depósito Industrial Caazapá", obraId:"OB-003",
+      obraUuid:"a1b2c3d4-0003-4003-8003-000000000003",
+      cat:"Materiales", banco:"", desc:"Chapas — pendiente pago",
+      monto:42000000, forma:"Transferencia", estadoPago:"PENDIENTE",
+      iva_pct:10, genera_credito_fiscal:true,
+      eliminado:false },
+
+    // ── TRANSFERENCIA ENTRE CUENTAS (par espejo) ──────────────
+    // Movimiento de Banco Familiar → Caja Chica Obra (5M Gs.)
+    // Refleja flujo real: empresa retira efectivo para gastos diarios obra
+    { id:"d4e5f6a7-9100-4100-8100-000000091001", fecha:"2026-03-25",
+      tipo:"Transferencia", obra:"General", obraId:"GENERAL",
+      obraUuid:"GENERAL",
+      cat:"Transferencia", banco:"banco_demo_1",
+      desc:"Retiro a caja chica obra", monto:5000000,
+      forma:"Transferencia", estadoPago:"PAGADO",
+      esTransferencia:true, refId:"d4e5f6a7-9100-4100-8100-000000091002",
+      direccion:"egreso",
+      iva_pct:0, genera_credito_fiscal:false,
+      eliminado:false },
+    { id:"d4e5f6a7-9100-4100-8100-000000091002", fecha:"2026-03-25",
+      tipo:"Transferencia", obra:"General", obraId:"GENERAL",
+      obraUuid:"GENERAL",
+      cat:"Transferencia", banco:"banco_demo_2",
+      desc:"Ingreso desde Banco Familiar", monto:5000000,
+      forma:"Transferencia", estadoPago:"PAGADO",
+      esTransferencia:true, refId:"d4e5f6a7-9100-4100-8100-000000091001",
+      direccion:"ingreso",
+      iva_pct:0, genera_credito_fiscal:false,
+      eliminado:false },
   ],
 };
 
@@ -4969,6 +5564,23 @@ let tempState = {
 //  LÓGICA DE ARRANQUE — checkSetup v8
 // ════════════════════════════════════════════════════════════
 function checkSetup(){
+  // CHAT 3.8.1: limpieza preventiva de pantalla de bloqueo si quedó montada
+  // de una carga previa (antes de aplicar el bypass). Sin esto, un usuario
+  // que ya vio "Acceso suspendido" sigue viéndola al recargar.
+  const bloqueoExistente = document.getElementById('sub-bloqueo-screen');
+  if(bloqueoExistente) bloqueoExistente.remove();
+
+  // CHAT 3.8.1: limpiar flags de bloqueo persistidos en state.subscription.
+  // Si en Chat 6 se reactiva la lógica, el usuario arranca limpio sin
+  // arrastrar _offlineBlock / _soloLectura de sesiones previas.
+  if(state.subscription){
+    let dirty = false;
+    if(state.subscription._offlineBlock){ delete state.subscription._offlineBlock; dirty = true; }
+    if(state.subscription._offlineWarn){  delete state.subscription._offlineWarn;  dirty = true; }
+    if(state.subscription._soloLectura){  delete state.subscription._soloLectura;  dirty = true; }
+    if(dirty) try { saveState(); } catch(e){}
+  }
+
   // 1. Leer appMode persistido — tratar "" o "null" como null
   const modoGuardado = localStorage.getItem("appMode");
   appMode = (modoGuardado === 'DEMO' || modoGuardado === 'REAL') ? modoGuardado : null;
@@ -5381,14 +5993,16 @@ function _safeMov(m){
   };
 }
 
-function compartirObra(obraId){
-  const o = (state.obras||[]).find(x=>x.id===obraId);
+function compartirObra(obraUuid){
+  // FIX 16 (Chat 3.7): recibe UUID inmutable, no código display
+  // Retrocompat: si recibe un código legacy (no UUID), busca por id como fallback
+  let o = (state.obras||[]).find(x=>x.uuid===obraUuid);
+  if(!o) o = (state.obras||[]).find(x=>x.id===obraUuid);
   if(!o){ showToast("Obra no encontrada","err"); return; }
 
-  const c = calcObra(o.id);
-  const tasaIVA = (o.iva_pct !== undefined && o.iva_pct !== null && o.iva_pct !== "") ? parseFloat(o.iva_pct)/100 : 0.10;
-  const iva_debito  = tasaIVA>0 ? Math.round(c.cobrado/(1+tasaIVA)*tasaIVA) : 0;
-  const iva_credito = tasaIVA>0 ? Math.round(c.gastos/(1+tasaIVA)*tasaIVA) : 0;
+  const c = calcObra(o.uuid);
+  // FIX 17+18 (Chat 3.7): IVA agregado mov a mov con tasaMov heredada
+  const {iva_debito, iva_credito} = calcIvaObra(o);
   const credito_preobra = o.credito_preobra||0;
   const pos_iva = iva_debito - iva_credito - credito_preobra;
   const retenciones = o.etapas?o.etapas.reduce((s,e)=>s+(e.ret||0),0):0;
@@ -5398,15 +6012,16 @@ function compartirObra(obraId){
   const m = calcMetricasObra(o);
 
   // Últimos 10 movimientos (sin notas internas, sin banco)
+  // FIX 16: filtro por obraUuid (reemplaza parche defensivo Chat 3.6)
   const ultimosMovs = (state.movs||[])
-    .filter(mv=>mv.obra && (mv.obra===o.id||mv.obra.startsWith(o.id+" ")) && !mv.eliminado)
+    .filter(mv=>mv.obraUuid === o.uuid && !mv.eliminado)
     .sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""))
     .slice(0,10)
     .map(_safeMov);
 
   const reporte = {
     obra: {
-      id: o.id,
+      id: o.codigo || o.id,
       nombre: o.nombre||"",
       cliente: o.cliente||"",
       estado: o.estado||"",
@@ -6389,17 +7004,15 @@ function dtRenderBancosView(c){
 
 // ── IVA DESKTOP ───────────────────────────────────────────────
 function dtRenderIvaView(c){
-  const movs = state.movs||[];
+  // FIX 16+17+18 (Chat 3.7): IVA agregado mov a mov con tasaMov heredada
+  // y débito sobre monto_facturado_bruto en cobros.
   const obras = state.obras||[];
   let ivaDebito=0, ivaCredito=0, creditoPre=0;
 
   obras.forEach(o=>{
-    const pct = (o.iva_pct!==undefined&&o.iva_pct!==null&&o.iva_pct!=="") ? parseFloat(o.iva_pct) : 10;
-    const factor = pct/100;
-    movs.filter(m=>m.obra&&(m.obra===o.id||m.obra.startsWith(o.id+" "))).forEach(m=>{
-      if(m.tipo==='Cobro'||m.tipo==='Depósito') ivaDebito  += (m.monto||0)*factor/(1+factor);
-      else                                       ivaCredito += (m.monto||0)*factor/(1+factor);
-    });
+    const {iva_debito, iva_credito} = calcIvaObra(o);
+    ivaDebito  += iva_debito;
+    ivaCredito += iva_credito;
     creditoPre += (o.credito_preobra||0);
   });
 
@@ -6410,19 +7023,14 @@ function dtRenderIvaView(c){
   const fmt = n => sym+' '+new Intl.NumberFormat('es-PY').format(Math.round(Math.abs(n)));
 
   const desglose = obras.map(o=>{
-    const pct = (o.iva_pct!==undefined&&o.iva_pct!==null&&o.iva_pct!=="") ? parseFloat(o.iva_pct) : 10;
-    const factor = pct/100;
-    let deb=0,cred=0,pre=o.credito_preobra||0;
-    movs.filter(m=>m.obra&&(m.obra===o.id||m.obra.startsWith(o.id+" "))).forEach(m=>{
-      if(m.tipo==='Cobro'||m.tipo==='Depósito') deb+=(m.monto||0)*factor/(1+factor);
-      else cred+=(m.monto||0)*factor/(1+factor);
-    });
-    const net=deb-cred-pre;
-    const nc=net<=0?'var(--green)':'var(--red)';
+    const {iva_debito, iva_credito} = calcIvaObra(o);
+    const pre = o.credito_preobra||0;
+    const net = iva_debito - iva_credito - pre;
+    const nc  = net<=0?'var(--green)':'var(--red)';
     return `<tr>
       <td style="padding:10px 14px;font-size:13px;font-weight:600;border-bottom:1px solid var(--border)">${o.nombre}</td>
-      <td style="padding:10px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--red);border-bottom:1px solid var(--border)">${fmt(deb)}</td>
-      <td style="padding:10px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--green);border-bottom:1px solid var(--border)">${fmt(cred)}</td>
+      <td style="padding:10px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--red);border-bottom:1px solid var(--border)">${fmt(iva_debito)}</td>
+      <td style="padding:10px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--green);border-bottom:1px solid var(--border)">${fmt(iva_credito)}</td>
       <td style="padding:10px 14px;font-size:12px;font-family:'DM Mono',monospace;color:${nc};border-bottom:1px solid var(--border)">${net<=0?'A FAVOR':'A PAGAR'} ${fmt(net)}</td>
     </tr>`;
   }).join('');
@@ -6617,7 +7225,7 @@ function dtStatsCategorias(){
 
 function dtStatsAlertas(){
   const alertasObras = getObrasEnAlerta();
-  const inactivas = (state.obras||[]).filter(o => obraInactiva(o.id));
+  const inactivas = (state.obras||[]).filter(o => obraInactiva(o.uuid));
   const cxpVencidas = (state.movs||[])
     .filter(m => isGasto(m.tipo) && m.estadoPago==="PENDIENTE" && !m.eliminado && m.fecha)
     .sort((a,b) => a.fecha.localeCompare(b.fecha))
