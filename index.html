@@ -1921,7 +1921,7 @@ html.zoku-public body{visibility:visible !important}
     <div class="view" id="view-bancos">
       <div class="topbar">
         <div class="sec-title" style="font-size:20px;font-weight:800;letter-spacing:-0.03em">Cuentas</div>
-        <div class="sec-more" onclick="openModal('banco')">+ Cuenta</div>
+        <button onclick="openModal('banco')" style="background:var(--blue);color:#fff;border:none;border-radius:99px;padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px">+ Cuenta</button>
       </div>
       <div id="bancos-resumen" style="margin-bottom:16px"></div>
       <div id="bancos-list"></div>
@@ -2076,6 +2076,15 @@ html.zoku-public body{visibility:visible !important}
         <option value="0">Exento</option>
       </select>
     </div>
+    <!-- FIX-E Sesión actual: campos proveedor obligatorios para Hechauka SET -->
+    <div class="fg" id="fg-proveedor" style="display:none">
+      <label>Proveedor <span style="color:var(--red);font-weight:700">*</span></label>
+      <input class="fi" id="f-proveedor" type="text" placeholder="Ej: Cemex Paraguay SA" autocomplete="off"/>
+    </div>
+    <div class="fg" id="fg-proveedor-ruc" style="display:none">
+      <label>RUC proveedor <span style="font-size:9px;color:var(--text3);font-weight:600">— recomendado para Hechauka</span></label>
+      <input class="fi" id="f-proveedor-ruc" type="text" placeholder="80000000-0" autocomplete="off"/>
+    </div>
     <div class="fg">
       <label>Categoría</label>
       <select class="fi" id="f-cat">
@@ -2116,7 +2125,7 @@ html.zoku-public body{visibility:visible !important}
         <span class="pago-switch-label">¿Ya fue pagado?</span>
         <span class="pago-estado pendiente" id="pago-estado-lbl">PENDIENTE</span>
       </div>
-      <button class="toggle" id="toggle-pagado" onclick="togglePago()"></button>
+      <button type="button" class="toggle" id="toggle-pagado" onclick="togglePago()"></button>
     </div>
     <button class="btn-primary" id="btn-guardar-mov" onclick="guardarMov()">Registrar movimiento</button>
     <button class="btn-secondary" onclick="closeModal('modal-mov')">Cancelar</button>
@@ -2286,8 +2295,9 @@ let state = {
   moneda_principal: "GS",
   pendientesSync:   [],
   lastCloudSync:    "",
-  schemaVersion:    4,
+  schemaVersion:    5,
   subscription:     null,
+  iva_credito_inicial: 0, // FIX-G Sesión actual: saldo IVA a favor empresa previo a ZOKU
 };
 
 function loadState(){
@@ -2470,6 +2480,24 @@ function loadState(){
           const key = (appMode === 'DEMO') ? SK_DEMO : SK;
           localStorage.setItem(key, JSON.stringify(state));
         } catch(e){ console.error("Error persistiendo migración v4:", e); }
+      }
+      if(state.schemaVersion < 5){
+        // ─── v4 → v5 ───────────────────────────────────────────
+        // FIX-G Sesión actual: campo state.iva_credito_inicial (saldo IVA a favor
+        // empresa previo a usar ZOKU). Default 0. Se descuenta en posición IVA global.
+        // FIX-E Sesión actual: campos m.proveedor + m.proveedorRuc en gastos
+        // (informativo retroactivo, no se intenta inferir el proveedor).
+        if(state.iva_credito_inicial === undefined) state.iva_credito_inicial = 0;
+        (state.movs||[]).forEach(m=>{
+          if(m.proveedor === undefined) m.proveedor = "";
+          if(m.proveedorRuc === undefined) m.proveedorRuc = "";
+        });
+        state.schemaVersion = 5;
+        console.info("ZOKU: migración schema v4 → v5 completada — iva_credito_inicial + proveedor en movs");
+        try {
+          const key = (appMode === 'DEMO') ? SK_DEMO : SK;
+          localStorage.setItem(key, JSON.stringify(state));
+        } catch(e){ console.error("Error persistiendo migración v5:", e); }
       }
       // Migración defensiva subscription
       if(!state.subscription) startTrial();
@@ -3041,6 +3069,7 @@ function movHTML(m, showActions=false){
       <div class="mov-body">
         <div class="mov-nombre">${m.desc||m.cat}${transferTag}</div>
         <div class="mov-meta">${m.tipo} · ${m.obra||"Sin obra"}${m.banco?" · "+getBancoNombre(m.banco):""}${m.estadoPago==="PENDIENTE"?' <span class="cxp-badge">PENDIENTE</span>':""}</div>
+        ${m.proveedor?`<div style="font-size:11px;color:var(--blue2);margin-top:2px;font-weight:600">🏪 ${m.proveedor}${m.proveedorRuc?` · RUC ${m.proveedorRuc}`:""}</div>`:""}
         ${m.notas?`<div style="font-size:11px;color:var(--text3);margin-top:2px;font-style:italic">${m.notas}</div>`:""}
         ${showActions?`<div class="mov-actions">
           <button class="mov-btn mov-btn-edit" onclick="editMov('${m.id}')">Editar</button>
@@ -3150,7 +3179,7 @@ function renderObras(){
   const el = document.getElementById("obras-list");
   if(!el) return;
   if(state.obras.length===0){
-    el.innerHTML='<div class="empty-state-card" style="text-align:center;padding:40px 20px;cursor:pointer" onclick="document.querySelector(\'.fab\').click()"><svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 16px;display:block"><rect x="8" y="20" width="48" height="36" rx="6" fill="var(--blue-pale)" stroke="var(--blue2)" stroke-width="1.5"/><rect x="20" y="12" width="24" height="12" rx="4" fill="var(--blue-pale)" stroke="var(--blue2)" stroke-width="1.5"/><line x1="24" y1="34" x2="40" y2="34" stroke="var(--blue2)" stroke-width="2" stroke-linecap="round"/><line x1="24" y1="40" x2="36" y2="40" stroke="var(--blue2)" stroke-width="2" stroke-linecap="round" opacity=".5"/><circle cx="48" cy="48" r="10" fill="var(--blue)"/><line x1="48" y1="44" x2="48" y2="52" stroke="#fff" stroke-width="2" stroke-linecap="round"/><line x1="44" y1="48" x2="52" y2="48" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg><div class="empty-state-title">Sin obras registradas</div><div class="empty-state-sub">Agregá tu primera obra →</div></div>';
+    el.innerHTML='<div class="empty-state-card" style="text-align:center;padding:40px 20px;cursor:pointer" onclick="openModal(\'obra\')"><svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 16px;display:block"><rect x="8" y="20" width="48" height="36" rx="6" fill="var(--blue-pale)" stroke="var(--blue2)" stroke-width="1.5"/><rect x="20" y="12" width="24" height="12" rx="4" fill="var(--blue-pale)" stroke="var(--blue2)" stroke-width="1.5"/><line x1="24" y1="34" x2="40" y2="34" stroke="var(--blue2)" stroke-width="2" stroke-linecap="round"/><line x1="24" y1="40" x2="36" y2="40" stroke="var(--blue2)" stroke-width="2" stroke-linecap="round" opacity=".5"/><circle cx="48" cy="48" r="10" fill="var(--blue)"/><line x1="48" y1="44" x2="48" y2="52" stroke="#fff" stroke-width="2" stroke-linecap="round"/><line x1="44" y1="48" x2="52" y2="48" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg><div class="empty-state-title">Sin obras registradas</div><div class="empty-state-sub">Tocá para activar tu primer proyecto →</div></div>';
     return;
   }
   el.innerHTML = state.obras.map(o=>{
@@ -3362,6 +3391,11 @@ function renderBancos(){
       `:""}
     </div>`;
   }).join("");
+  // FIX-D Sesión actual: botón visible para agregar cuenta adicional al final del listado
+  listEl.innerHTML += `
+    <button onclick="openModal('banco')" style="width:100%;background:var(--card2);border:1.5px dashed var(--border2);border-radius:14px;padding:16px;color:var(--blue2);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px">
+      <span style="font-size:16px">+</span> Agregar otra cuenta bancaria
+    </button>`;
 }
 
 // ════════════════════════════════════════════════════════════
@@ -3579,6 +3613,16 @@ function renderAjustes(){
       <div class="fg"><label>RUC</label><input class="fi" id="aj-ruc" value="${state.empresa.ruc||""}" onchange="saveEmpresa()"/></div>
     </div>
     <div class="section">
+      <div class="sec-title" style="margin-bottom:6px">Posición fiscal inicial</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.4">Si tu empresa ya tenía saldo IVA a favor en la SET antes de empezar a usar ZOKU, cargalo acá. Se descuenta de tu posición IVA general.</div>
+      <div class="fg">
+        <label>Crédito IVA inicial empresa (Gs.)</label>
+        <input class="fi fi-monto" id="aj-iva-credito-inicial" type="text" inputmode="numeric"
+          value="${state.iva_credito_inicial?new Intl.NumberFormat('es-PY').format(state.iva_credito_inicial):''}"
+          placeholder="0" oninput="fmtInput(this)" onchange="saveIvaCreditoInicial()"/>
+      </div>
+    </div>
+    <div class="section">
       <div class="sec-title" style="margin-bottom:14px">Moneda</div>
       <div class="setting-row">
         <div><div class="setting-label">Moneda principal</div><div class="setting-sub">Se aplica a todos los movimientos</div></div>
@@ -3710,6 +3754,20 @@ function saveEmpresa(){
   if(el) el.textContent=state.empresa.nombre;
   _ajRefreshLogoUI(state.empresa.logo||null);
   showToast("✓ Guardado","ok");
+}
+
+// FIX-G Sesión actual: persistir crédito IVA inicial empresa (Ley 6380/19, Decreto 3107/19)
+function saveIvaCreditoInicial(){
+  const raw = document.getElementById("aj-iva-credito-inicial")?.value||"";
+  const monto = parseMonto(raw);
+  if(monto < 0){
+    showToast("El crédito IVA no puede ser negativo","err");
+    return;
+  }
+  state.iva_credito_inicial = monto;
+  saveState();
+  render();
+  showToast("✓ Crédito IVA inicial guardado","ok");
 }
 
 function ajUploadLogo(){
@@ -3947,15 +4005,22 @@ function openModal(tipo){
     if(sBancoDest) sBancoDest.value = "";
     // FIX 20 (Chat 3.8): reset de todos los campos retención SET y IVA override
     // (evita arrastre de valores tras editar un cobro previo).
+    // FIX-E Sesión actual: incluir proveedor + RUC en reset
     const _resetIds = [
       "f-iva-override",
       "f-monto-bruto","f-retencion-iva","f-retencion-ire","f-retencion-fuente",
-      "f-retencion-iva-pct","f-retencion-ire-pct"
+      "f-retencion-iva-pct","f-retencion-ire-pct",
+      "f-proveedor","f-proveedor-ruc"
     ];
     _resetIds.forEach(id=>{
       const el = document.getElementById(id);
       if(el) el.value = "";
     });
+    // FIX-E Sesión actual: tipo default "Gasto" → mostrar campos proveedor
+    const fgProvOpen = document.getElementById("fg-proveedor");
+    const fgProvRucOpen = document.getElementById("fg-proveedor-ruc");
+    if(fgProvOpen) fgProvOpen.style.display = "block";
+    if(fgProvRucOpen) fgProvRucOpen.style.display = "block";
     initPagoSwitch();
     setTimeout(()=>document.getElementById("f-monto").focus(),400);
   }
@@ -4010,6 +4075,13 @@ function selTipo(el){
   // FIX 18 (Chat 3.7): bloque retención SET solo visible en cobros
   const fgRet = document.getElementById("fg-retencion-cobro");
   if(fgRet) fgRet.style.display = isCobro(tipoSel) ? "block" : "none";
+
+  // FIX-E Sesión actual: campos proveedor solo visibles en gastos
+  const esGastoTipo = ["Gasto","Pago proveedor","Mano de obra"].includes(tipoSel);
+  const fgProv = document.getElementById("fg-proveedor");
+  const fgProvRuc = document.getElementById("fg-proveedor-ruc");
+  if(fgProv) fgProv.style.display = esGastoTipo ? "block" : "none";
+  if(fgProvRuc) fgProvRuc.style.display = esGastoTipo ? "block" : "none";
 
   // Mostrar switch de pago solo para gastos
   initPagoSwitch();
@@ -4245,6 +4317,9 @@ function guardarMov(){
     // FIX 17
     iva_pct:               ivaOverride,
     genera_credito_fiscal: generaCredito,
+    // FIX-E Sesión actual: proveedor para Hechauka SET (solo gastos)
+    proveedor:    esGastoTipo ? (document.getElementById("f-proveedor")?.value.trim()||"") : "",
+    proveedorRuc: esGastoTipo ? (document.getElementById("f-proveedor-ruc")?.value.trim()||"") : "",
   };
   // FIX 20 (Chat 3.8): campos retención SET desagregados solo en cobros
   if(esCobro){
@@ -4316,6 +4391,20 @@ function editMov(id){
     ? String(m.retencion_iva_pct) : "";
   if(firpct) firpct.value = (m.retencion_ire_pct !== undefined && m.retencion_ire_pct !== null && m.retencion_ire_pct > 0)
     ? String(m.retencion_ire_pct) : "";
+
+  // FIX-E Sesión actual: restaurar proveedor + RUC y forzar visibilidad de campos según tipo
+  const fProv = document.getElementById("f-proveedor");
+  const fProvRuc = document.getElementById("f-proveedor-ruc");
+  if(fProv) fProv.value = m.proveedor||"";
+  if(fProvRuc) fProvRuc.value = m.proveedorRuc||"";
+  const esGastoEdit = ["Gasto","Pago proveedor","Mano de obra"].includes(m.tipo);
+  const fgProv = document.getElementById("fg-proveedor");
+  const fgProvRuc = document.getElementById("fg-proveedor-ruc");
+  if(fgProv) fgProv.style.display = esGastoEdit ? "block" : "none";
+  if(fgProvRuc) fgProvRuc.style.display = esGastoEdit ? "block" : "none";
+  // También garantizar visibilidad de retenciones según tipo en modo edición
+  const fgRetEdit = document.getElementById("fg-retencion-cobro");
+  if(fgRetEdit) fgRetEdit.style.display = isCobro(m.tipo) ? "block" : "none";
 
   setTimeout(()=>{
     const so=document.getElementById("f-obra");
@@ -5709,8 +5798,12 @@ function resetDemo(){
 
 // ── Aplicar UI de modo Demo ──────────────────────────────
 function _aplicarModoDemo(){
+  // FIX Sesión actual: solo aplicar si efectivamente estamos en DEMO
+  if(appMode !== 'DEMO') return;
   const banner = document.getElementById("demo-banner");
   if(banner) banner.classList.add("visible");
+  const dtBanner = document.getElementById("dt-demo-banner");
+  if(dtBanner) dtBanner.classList.add("visible");
   const fab = document.querySelector(".fab");
   if(fab) fab.classList.remove("pulsing");
   const badgeSync = document.getElementById("badge-no-sync");
@@ -5719,8 +5812,11 @@ function _aplicarModoDemo(){
 
 // ── Aplicar UI de modo Real ──────────────────────────────
 function _aplicarModoReal(){
+  // FIX Sesión actual: limpieza explícita de AMBOS banners (mobile + desktop)
   const banner = document.getElementById("demo-banner");
   if(banner) banner.classList.remove("visible");
+  const dtBanner = document.getElementById("dt-demo-banner");
+  if(dtBanner) dtBanner.classList.remove("visible");
   _actualizarBadgeSync();
   _actualizarFabPulso();
 }
@@ -6895,6 +6991,8 @@ function dtSelectMov(id){
     <div class="dt-panel-row"><span class="dt-panel-key">Tipo</span><span class="dt-panel-val">${m.tipo||'—'}</span></div>
     <div class="dt-panel-row"><span class="dt-panel-key">Categoría</span><span class="dt-panel-val">${m.cat||'—'}</span></div>
     <div class="dt-panel-row"><span class="dt-panel-key">Descripción</span><span class="dt-panel-val">${m.desc||'—'}</span></div>
+    ${m.proveedor?`<div class="dt-panel-row"><span class="dt-panel-key">Proveedor</span><span class="dt-panel-val">${m.proveedor}</span></div>`:''}
+    ${m.proveedorRuc?`<div class="dt-panel-row"><span class="dt-panel-key">RUC proveedor</span><span class="dt-panel-val">${m.proveedorRuc}</span></div>`:''}
     <div class="dt-panel-row"><span class="dt-panel-key">Obra</span><span class="dt-panel-val">${m.obra||'—'}</span></div>
     <div class="dt-panel-row"><span class="dt-panel-key">Banco</span><span class="dt-panel-val">${bancoNom}</span></div>
     <div class="dt-panel-row"><span class="dt-panel-key">Fecha</span><span class="dt-panel-val">${fecha} · ${hora}</span></div>
@@ -7006,6 +7104,8 @@ function dtRenderBancosView(c){
 function dtRenderIvaView(c){
   // FIX 16+17+18 (Chat 3.7): IVA agregado mov a mov con tasaMov heredada
   // y débito sobre monto_facturado_bruto en cobros.
+  // FIX-F Sesión actual: incluir IVA crédito/débito de movs sin obra (GENERAL)
+  // y crédito IVA inicial empresa (state.iva_credito_inicial).
   const obras = state.obras||[];
   let ivaDebito=0, ivaCredito=0, creditoPre=0;
 
@@ -7016,7 +7116,16 @@ function dtRenderIvaView(c){
     creditoPre += (o.credito_preobra||0);
   });
 
-  const posNeta = ivaDebito - ivaCredito - creditoPre;
+  // FIX-F: movimientos sin obra asignada (obraUuid === "GENERAL")
+  // típico: alquiler oficina, combustible no asignable, gastos administrativos, etc.
+  const ivaGen = calcIvaGeneral();
+  ivaDebito  += ivaGen.iva_debito;
+  ivaCredito += ivaGen.iva_credito;
+
+  // FIX-G: crédito IVA inicial de empresa (saldo a favor previo a usar ZOKU)
+  const creditoInicialEmpresa = Number(state.iva_credito_inicial)||0;
+
+  const posNeta = ivaDebito - ivaCredito - creditoPre - creditoInicialEmpresa;
   const posColor = posNeta<=0?'var(--green)':'var(--red)';
   const posTxt   = posNeta<=0?'A FAVOR':'A PAGAR';
   const sym = typeof getSym==='function' ? getSym() : 'Gs.';
@@ -7035,18 +7144,61 @@ function dtRenderIvaView(c){
     </tr>`;
   }).join('');
 
+  // FIX-F Sesión actual: fila adicional para movs sin obra
+  const filaGen = (ivaGen.iva_debito>0 || ivaGen.iva_credito>0) ? `<tr>
+    <td style="padding:10px 14px;font-size:13px;font-weight:600;border-bottom:1px solid var(--border);color:var(--text2);font-style:italic">Movs. sin obra (General)</td>
+    <td style="padding:10px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--red);border-bottom:1px solid var(--border)">${fmt(ivaGen.iva_debito)}</td>
+    <td style="padding:10px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--green);border-bottom:1px solid var(--border)">${fmt(ivaGen.iva_credito)}</td>
+    <td style="padding:10px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--text2);border-bottom:1px solid var(--border)">—</td>
+  </tr>` : '';
+
+  // FIX-G: fila de crédito inicial empresa
+  const filaInicial = creditoInicialEmpresa>0 ? `<tr>
+    <td style="padding:10px 14px;font-size:13px;font-weight:600;border-bottom:1px solid var(--border);color:var(--text2);font-style:italic">Crédito IVA inicial empresa</td>
+    <td style="padding:10px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--text3);border-bottom:1px solid var(--border)">—</td>
+    <td style="padding:10px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--green);border-bottom:1px solid var(--border)">${fmt(creditoInicialEmpresa)}</td>
+    <td style="padding:10px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--green);border-bottom:1px solid var(--border)">A FAVOR ${fmt(creditoInicialEmpresa)}</td>
+  </tr>` : '';
+
   c.innerHTML = `
     <div class="dt-iva-grid">
       <div class="dt-iva-card"><div class="dt-iva-lbl">IVA Débito (cobros)</div><div class="dt-iva-val" style="color:var(--red)">${fmt(ivaDebito)}</div></div>
-      <div class="dt-iva-card"><div class="dt-iva-lbl">IVA Crédito (gastos + pre-obra)</div><div class="dt-iva-val" style="color:var(--green)">${fmt(ivaCredito+creditoPre)}</div></div>
+      <div class="dt-iva-card"><div class="dt-iva-lbl">IVA Crédito (gastos + pre-obra + inicial)</div><div class="dt-iva-val" style="color:var(--green)">${fmt(ivaCredito+creditoPre+creditoInicialEmpresa)}</div></div>
       <div class="dt-iva-card"><div class="dt-iva-lbl">Posición neta <span style="background:${posColor};color:#fff;border-radius:6px;padding:2px 8px;font-size:10px;margin-left:6px">${posTxt}</span></div><div class="dt-iva-val" style="color:${posColor}">${fmt(posNeta)}</div></div>
     </div>
     <div class="dt-table-card">
       <div style="padding:14px 20px;font-size:12px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border)">Desglose por obra</div>
       <table class="dt-table"><thead><tr>
         <th>Obra</th><th>IVA Débito</th><th>IVA Crédito</th><th>Posición</th>
-      </tr></thead><tbody>${desglose||'<tr><td colspan="4" style="text-align:center;padding:30px;color:var(--text3)">Sin obras registradas</td></tr>'}</tbody></table>
+      </tr></thead><tbody>${desglose}${filaGen}${filaInicial}${(!desglose && !filaGen && !filaInicial) ? '<tr><td colspan="4" style="text-align:center;padding:30px;color:var(--text3)">Sin movimientos con IVA</td></tr>' : ''}</tbody></table>
     </div>`;
+}
+
+// FIX-F Sesión actual: cálculo IVA para movs sin obra (obraUuid === "GENERAL")
+function calcIvaGeneral(){
+  let iva_debito = 0, iva_credito = 0;
+  (state.movs||[]).forEach(m=>{
+    if(m.eliminado || m.esTransferencia) return;
+    if(m.obraUuid !== "GENERAL") return; // solo movs generales
+    // Tasa: override del mov o 10% por defecto (no hay obra que herede)
+    const tasaRaw = (m.iva_pct !== undefined && m.iva_pct !== null && m.iva_pct !== "")
+      ? parseFloat(m.iva_pct) : 10;
+    const tasa = tasaRaw / 100;
+    if(tasa <= 0) return; // exento
+    const factor = tasa/(1+tasa);
+    if(isCobro(m.tipo)){
+      const bruto = (m.monto_facturado_bruto !== undefined && m.monto_facturado_bruto !== null)
+        ? m.monto_facturado_bruto : m.monto;
+      iva_debito += (bruto||0) * factor;
+    } else if(isGasto(m.tipo)){
+      if(m.genera_credito_fiscal === false) return;
+      iva_credito += (m.monto||0) * factor;
+    }
+  });
+  return {
+    iva_debito:  Math.round(iva_debito),
+    iva_credito: Math.round(iva_credito),
+  };
 }
 
 // ── ESTADÍSTICAS ──────────────────────────────────────────────
