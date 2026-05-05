@@ -2916,9 +2916,15 @@ function calcMetricasObra(o){
 function calcBanco(id){
   // Regla 6: solo movimientos PAGADOS afectan el saldo bancario
   // Regla 8: ignorar eliminados
+  // FIX BUG 5 Sesión actual: precedencia de operadores parentizada explícitamente.
+  // La condición original `isCobro(m.tipo)||m.tipo==="Movimiento bancario"&&m.monto>0`
+  // dependía de que && tiene mayor precedencia que ||. Funcionaba pero era frágil.
+  // Comportamiento idéntico, ahora explícito y seguro contra futuras refactorizaciones.
   const bm = state.movs.filter(m=>m.banco===id && !m.eliminado && m.estadoPago!=="PENDIENTE");
-  const entradas = bm.filter(m=>isCobro(m.tipo)||m.tipo==="Movimiento bancario"&&m.monto>0).reduce((s,m)=>s+m.monto,0);
-  const salidas  = bm.filter(m=>isGasto(m.tipo)).reduce((s,m)=>s+m.monto,0);
+  const entradas = bm.filter(m =>
+    isCobro(m.tipo) || (m.tipo==="Movimiento bancario" && (m.monto||0) > 0)
+  ).reduce((s,m)=>s+(m.monto||0), 0);
+  const salidas = bm.filter(m => isGasto(m.tipo)).reduce((s,m)=>s+(m.monto||0), 0);
   return {entradas, salidas};
 }
 function calcCuentasPorPagar(){
@@ -5675,6 +5681,25 @@ function checkSetup(){
   appMode = (modoGuardado === 'DEMO' || modoGuardado === 'REAL') ? modoGuardado : null;
   if(!modoGuardado || modoGuardado === 'null') localStorage.removeItem("appMode");
 
+  // FIX banner DEMO Sesión actual: si appMode='DEMO' pero existen datos REAL
+  // configurados con empresa válida, el usuario probó demo y ya configuró su
+  // empresa real — preferir REAL silenciosamente para evitar que el banner
+  // amarillo persista indefinidamente. La data DEMO sigue intacta en SK_DEMO
+  // para volver desde Ajustes si lo necesita.
+  if(appMode === 'DEMO'){
+    try {
+      const realRaw = localStorage.getItem(SK);
+      if(realRaw){
+        const realParsed = JSON.parse(realRaw);
+        if(realParsed && realParsed.configured && realParsed.empresa && realParsed.empresa.nombre){
+          appMode = 'REAL';
+          localStorage.setItem("appMode", "REAL");
+          console.info("ZOKU: appMode='DEMO' con datos REAL configurados detectados → cambio automático a REAL");
+        }
+      }
+    } catch(e){ /* ignorar — sigue como DEMO */ }
+  }
+
   // 2. Árbol de decisión
   if(!appMode){
     // Primera vez o después de un reset total
@@ -6781,7 +6806,7 @@ function dtBuildTabla(movs, mini){
     const obraNombre = m.obra ? m.obra.replace(/^[\w-]+\s*/,'') : '—';
     const sel = dtSelectedMovId === m.id ? 'selected' : '';
 
-    return `<tr class="${sel}" onclick="dtSelectMov(${m.id})" data-id="${m.id}">
+    return `<tr class="${sel}" onclick="dtSelectMov('${m.id}')" data-id="${m.id}">
       <td><span class="dt-ref">${ref}</span></td>
       <td><span class="dt-fecha">${fecha}${hora}</span></td>
       <td><span class="dt-badge ${tipoBadge}">${m.tipo||'—'}</span></td>
@@ -6979,7 +7004,7 @@ function dtSelectMov(id){
   const bancoNom = (state.bancos||[]).find(b=>b.id===m.banco)?.nombre || m.banco || '—';
   const esPendiente = m.estadoPago === 'PENDIENTE';
 
-  const pagarBtn = esPendiente ? `<button class="dt-panel-btn dt-panel-btn-pagar" onclick="dtMarcarPagado(${m.id})">✓ Marcar como pagado</button>` : '';
+  const pagarBtn = esPendiente ? `<button class="dt-panel-btn dt-panel-btn-pagar" onclick="dtMarcarPagado('${m.id}')">✓ Marcar como pagado</button>` : '';
 
   const inner = `
     <div class="dt-panel-close">
@@ -7000,8 +7025,8 @@ function dtSelectMov(id){
     <div class="dt-panel-audit">Creado por ${state.empresa?.usuario||'Admin'} · ${creado}</div>
     <div class="dt-panel-actions">
       ${pagarBtn}
-      <button class="dt-panel-btn dt-panel-btn-edit" onclick="dtEditarMov(${m.id})">✏ Editar</button>
-      <button class="dt-panel-btn dt-panel-btn-del" onclick="dtEliminarMov(${m.id})">🗑 Eliminar</button>
+      <button class="dt-panel-btn dt-panel-btn-edit" onclick="dtEditarMov('${m.id}')">✏ Editar</button>
+      <button class="dt-panel-btn dt-panel-btn-del" onclick="dtEliminarMov('${m.id}')">🗑 Eliminar</button>
     </div>
   `;
 
@@ -7031,17 +7056,23 @@ function dtMarcarPagado(id){
 function dtEditarMov(id){
   const m = (state.movs||[]).find(x=>x.id===id);
   if(!m) return;
-  // Reutilizar modal mobile existente
-  if(typeof abrirEditar==='function') abrirEditar(m);
+  // FIX BUG 3 Sesión actual: la función real es editMov, no abrirEditar.
+  // Cierra el panel desktop antes de abrir el modal para evitar overlay.
+  dtClosePanel();
+  if(typeof editMov==='function') editMov(id);
   else if(typeof openModal==='function') openModal('mov');
 }
 
 function dtEliminarMov(id){
-  if(typeof eliminarMov==='function'){
-    eliminarMov(id);
+  // FIX BUG 3 Sesión actual: la función real es deleteMov (soft-delete con papelera
+  // y trigger FIFO sync). El fallback con splice() destruía datos sin auditoría
+  // y desincronizaba GAS — eliminado.
+  if(typeof deleteMov==='function'){
+    deleteMov(id);
   } else {
-    const idx = (state.movs||[]).findIndex(x=>x.id===id);
-    if(idx>-1){ state.movs.splice(idx,1); if(typeof saveState==='function') saveState(); }
+    console.error("ZOKU: deleteMov no disponible — operación cancelada para evitar pérdida de datos");
+    if(typeof showToast==='function') showToast("Error: función de eliminación no disponible","err");
+    return;
   }
   dtClosePanel();
   dtRenderView();
@@ -7051,7 +7082,7 @@ function dtEliminarMov(id){
 function dtRenderObrasView(c){
   const obras = state.obras || [];
   if(obras.length === 0){
-    c.innerHTML = `<div class="dt-empty-dashboard"><div class="dt-empty-ico">🏗</div><div class="dt-empty-title">Sin obras registradas</div><div class="dt-empty-sub">Creá tu primera obra para comenzar a asignar movimientos.</div><button class="dt-empty-btn" onclick="openModal('modal-obra')">+ Activar proyecto</button></div>`;
+    c.innerHTML = `<div class="dt-empty-dashboard"><div class="dt-empty-ico">🏗</div><div class="dt-empty-title">Sin obras registradas</div><div class="dt-empty-sub">Creá tu primera obra para comenzar a asignar movimientos.</div><button class="dt-empty-btn" onclick="openModal('obra')">+ Activar proyecto</button></div>`;
     return;
   }
   // Reusar render mobile dentro de un wrapper desktop
@@ -7074,26 +7105,47 @@ function dtRenderObrasView(c){
 function dtRenderBancosView(c){
   const bancos = state.bancos || [];
   if(bancos.length === 0){
-    c.innerHTML = `<div class="dt-empty-dashboard"><div class="dt-empty-ico">🏦</div><div class="dt-empty-title">Sin cuentas bancarias</div><div class="dt-empty-sub">Agregá tus cuentas para llevar el saldo actualizado.</div><button class="dt-empty-btn" onclick="openModal('modal-banco')">+ Nueva cuenta</button></div>`;
+    c.innerHTML = `<div class="dt-empty-dashboard"><div class="dt-empty-ico">🏦</div><div class="dt-empty-title">Sin cuentas bancarias</div><div class="dt-empty-sub">Agregá tus cuentas para llevar el saldo actualizado.</div><button class="dt-empty-btn" onclick="openModal('banco')">+ Nueva cuenta</button></div>`;
     return;
   }
   const sym = typeof getSym==='function' ? getSym() : 'Gs.';
-  const movs = state.movs||[];
 
+  // FIX BUG 2 Sesión actual: usar calcSaldoBanco unificado (mobile y desktop)
+  // en lugar de reimplementar lógica que ignoraba: m.eliminado, estadoPago PENDIENTE,
+  // isCobro/isGasto, transferencias entre cuentas, Movimiento bancario con signo.
+  // Saldo CAJA: solo PAGADO. Saldo PROYECTADO: incluye PENDIENTE (devengado).
   const cards = bancos.map(b=>{
-    let sal = b.saldo_inicial||0;
-    movs.forEach(m=>{
-      if(m.banco===b.id){
-        if(m.tipo==='Cobro'||m.tipo==='Depósito') sal+=(m.monto||0);
-        else sal-=(m.monto||0);
-      }
-    });
+    const sal = calcSaldoBanco(b);
+
+    // Saldo proyectado = caja + gastos pendientes (salida futura) - cobros pendientes inversos
+    // Cobros pendientes NO se descuentan, son ingreso futuro
+    const movsBanco = (state.movs||[]).filter(m =>
+      m.banco === b.id && !m.eliminado && m.estadoPago === "PENDIENTE"
+    );
+    const gastosPend = movsBanco.filter(m => isGasto(m.tipo)).reduce((s,m)=>s+(m.monto||0), 0);
+    const cobrosPend = movsBanco.filter(m => isCobro(m.tipo)).reduce((s,m)=>s+(m.monto||0), 0);
+    const salProyectado = sal - gastosPend + cobrosPend;
+
     const salFmt = new Intl.NumberFormat('es-PY').format(Math.round(Math.abs(sal)));
     const salColor = sal>=0?'var(--green)':'var(--red)';
+    const salPrefix = sal<0?'-':'';
+    const sobregiroBadge = sal<0
+      ? `<span style="background:var(--red-pale);color:var(--red);border:1px solid var(--red);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:800;margin-left:6px">SOBREGIRO</span>`
+      : '';
+
+    let proyectadoHtml = '';
+    if(gastosPend>0 || cobrosPend>0){
+      const proyFmt = new Intl.NumberFormat('es-PY').format(Math.round(Math.abs(salProyectado)));
+      const proyColor = salProyectado>=0?'var(--text2)':'var(--red)';
+      const proyPrefix = salProyectado<0?'-':'';
+      proyectadoHtml = `<div style="font-size:11px;color:${proyColor};margin-top:6px;font-family:'DM Mono',monospace">Proyectado: ${proyPrefix}${sym} ${proyFmt}</div>`;
+    }
+
     return `<div class="dt-metric-card" style="grid-column:span 1">
-      <div class="dt-metric-label">🏦 ${b.nombre}</div>
-      <div class="dt-metric-val" style="font-size:24px;color:${salColor}">${sym} ${salFmt}</div>
+      <div class="dt-metric-label">🏦 ${b.nombre} ${sobregiroBadge}</div>
+      <div class="dt-metric-val" style="font-size:24px;color:${salColor}">${salPrefix}${sym} ${salFmt}</div>
       <div class="dt-metric-sub">${b.tipo||'Cuenta'}</div>
+      ${proyectadoHtml}
     </div>`;
   }).join('');
 
@@ -7166,12 +7218,108 @@ function dtRenderIvaView(c){
       <div class="dt-iva-card"><div class="dt-iva-lbl">IVA Crédito (gastos + pre-obra + inicial)</div><div class="dt-iva-val" style="color:var(--green)">${fmt(ivaCredito+creditoPre+creditoInicialEmpresa)}</div></div>
       <div class="dt-iva-card"><div class="dt-iva-lbl">Posición neta <span style="background:${posColor};color:#fff;border-radius:6px;padding:2px 8px;font-size:10px;margin-left:6px">${posTxt}</span></div><div class="dt-iva-val" style="color:${posColor}">${fmt(posNeta)}</div></div>
     </div>
-    <div class="dt-table-card">
+    <div class="dt-table-card" style="margin-bottom:18px">
       <div style="padding:14px 20px;font-size:12px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border)">Desglose por obra</div>
       <table class="dt-table"><thead><tr>
         <th>Obra</th><th>IVA Débito</th><th>IVA Crédito</th><th>Posición</th>
       </tr></thead><tbody>${desglose}${filaGen}${filaInicial}${(!desglose && !filaGen && !filaInicial) ? '<tr><td colspan="4" style="text-align:center;padding:30px;color:var(--text3)">Sin movimientos con IVA</td></tr>' : ''}</tbody></table>
+    </div>
+    ${dtRenderIvaDetalleCompras(sym, fmt)}
+  `;
+}
+
+// ── DETALLE COMPRAS CON IVA CRÉDITO (preparación Hechauka SET) ────
+// FIX BUG 6 Sesión actual: tabla de cada gasto que generó crédito fiscal,
+// con proveedor, RUC, fecha, comprobante (futuro), monto gravado y IVA crédito.
+// Visible en una sola pantalla junto al desglose por obra y los KPIs.
+function dtRenderIvaDetalleCompras(sym, fmt){
+  const movsConIva = (state.movs||[]).filter(m =>
+    !m.eliminado && !m.esTransferencia && isGasto(m.tipo) &&
+    m.genera_credito_fiscal !== false && (m.monto||0) > 0
+  );
+  if(movsConIva.length === 0){
+    return `<div class="dt-table-card">
+      <div style="padding:14px 20px;font-size:12px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border)">Detalle de compras con IVA crédito</div>
+      <div style="padding:30px;text-align:center;color:var(--text3)">Sin compras registradas con crédito fiscal.</div>
     </div>`;
+  }
+  // Mapear obras por uuid para resolver nombre rápido
+  const obraNombre = {};
+  (state.obras||[]).forEach(o => { obraNombre[o.uuid] = o.nombre || o.codigo || o.uuid; });
+
+  // Ordenar por fecha desc
+  const sorted = [...movsConIva].sort((a,b) => (b.fecha||'').localeCompare(a.fecha||''));
+
+  let totalGravado = 0, totalIvaCred = 0;
+  const filas = sorted.map(m => {
+    // Tasa: override del mov, o de la obra heredada, o 10% default
+    let tasaRaw;
+    if(m.iva_pct !== undefined && m.iva_pct !== null && m.iva_pct !== ""){
+      tasaRaw = parseFloat(m.iva_pct);
+    } else {
+      const obra = (state.obras||[]).find(o => o.uuid === m.obraUuid);
+      tasaRaw = (obra && obra.iva_default !== undefined) ? obra.iva_default : 10;
+    }
+    const tasa = tasaRaw/100;
+    const factor = tasa>0 ? tasa/(1+tasa) : 0;
+    const ivaCred = Math.round((m.monto||0) * factor);
+    const gravado = (m.monto||0) - ivaCred;
+    totalGravado += gravado;
+    totalIvaCred += ivaCred;
+
+    const fecha = m.fecha ? m.fecha.split('-').reverse().join('/') : '—';
+    const obraTxt = m.obraUuid === "GENERAL" || !m.obraUuid
+      ? '<span style="color:var(--text3);font-style:italic">General</span>'
+      : (obraNombre[m.obraUuid] || '—');
+    const prov = m.proveedor || '<span style="color:var(--text3)">—</span>';
+    const ruc  = m.proveedorRuc || '<span style="color:var(--text3)">—</span>';
+    const comp = m.tipoComprobante || '<span style="color:var(--text3)">—</span>';
+    const tasaTxt = tasa>0 ? (tasaRaw+'%') : 'Exento';
+
+    return `<tr>
+      <td style="padding:8px 12px;font-size:12px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${fecha}</td>
+      <td style="padding:8px 12px;font-size:12px;border-bottom:1px solid var(--border);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.proveedor||''}">${prov}</td>
+      <td style="padding:8px 12px;font-size:11px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:var(--text2)">${ruc}</td>
+      <td style="padding:8px 12px;font-size:12px;border-bottom:1px solid var(--border);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${m.desc||''}">${m.desc||'—'}</td>
+      <td style="padding:8px 12px;font-size:11px;border-bottom:1px solid var(--border);color:var(--text2)">${obraTxt}</td>
+      <td style="padding:8px 12px;font-size:11px;border-bottom:1px solid var(--border);color:var(--text2)">${comp}</td>
+      <td style="padding:8px 12px;font-size:11px;border-bottom:1px solid var(--border);text-align:center">${tasaTxt}</td>
+      <td style="padding:8px 12px;font-size:12px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;text-align:right">${fmt(gravado)}</td>
+      <td style="padding:8px 12px;font-size:12px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;text-align:right;color:var(--green);font-weight:700">${fmt(ivaCred)}</td>
+    </tr>`;
+  }).join('');
+
+  return `<div class="dt-table-card">
+    <div style="padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)">
+      <div style="font-size:12px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">Detalle de compras con IVA crédito</div>
+      <div style="font-size:10px;color:var(--text3)">${sorted.length} comprobante${sorted.length!==1?'s':''} · base Hechauka</div>
+    </div>
+    <div style="overflow-x:auto;max-height:480px">
+      <table class="dt-table" style="min-width:1100px">
+        <thead style="position:sticky;top:0;background:var(--card);z-index:1">
+          <tr>
+            <th style="padding:10px 12px;text-align:left;font-size:10px">Fecha</th>
+            <th style="padding:10px 12px;text-align:left;font-size:10px">Proveedor</th>
+            <th style="padding:10px 12px;text-align:left;font-size:10px">RUC</th>
+            <th style="padding:10px 12px;text-align:left;font-size:10px">Descripción</th>
+            <th style="padding:10px 12px;text-align:left;font-size:10px">Obra</th>
+            <th style="padding:10px 12px;text-align:left;font-size:10px">Comprob.</th>
+            <th style="padding:10px 12px;text-align:center;font-size:10px">Tasa</th>
+            <th style="padding:10px 12px;text-align:right;font-size:10px">Gravado</th>
+            <th style="padding:10px 12px;text-align:right;font-size:10px">IVA crédito</th>
+          </tr>
+        </thead>
+        <tbody>${filas}</tbody>
+        <tfoot>
+          <tr style="background:var(--card2);font-weight:800">
+            <td colspan="7" style="padding:12px;text-align:right;font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em">Totales</td>
+            <td style="padding:12px;text-align:right;font-family:'DM Mono',monospace;font-size:13px">${fmt(totalGravado)}</td>
+            <td style="padding:12px;text-align:right;font-family:'DM Mono',monospace;font-size:13px;color:var(--green)">${fmt(totalIvaCred)}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>`;
 }
 
 // FIX-F Sesión actual: cálculo IVA para movs sin obra (obraUuid === "GENERAL")
@@ -7507,7 +7655,7 @@ function dtRenderCxpView(c){
     const obraId = m.obra ? m.obra.split(' ')[0] : '—';
     const obraNombre = m.obra ? m.obra.replace(/^[\w-]+\s*/,'') : '—';
     const sel = dtSelectedMovId === m.id ? 'selected' : '';
-    return `<tr class="${sel}" onclick="dtSelectMov(${m.id})" data-id="${m.id}">
+    return `<tr class="${sel}" onclick="dtSelectMov('${m.id}')" data-id="${m.id}">
       <td><span class="dt-ref">${m.ref||'—'}</span></td>
       <td><span class="dt-fecha">${fecha}</span></td>
       <td><span class="dt-badge dt-badge-gasto">${m.tipo||'—'}</span></td>
@@ -7515,7 +7663,7 @@ function dtRenderCxpView(c){
       <td><span class="dt-truncate" style="max-width:130px;display:block" title="${m.obra||''}">${obraId} ${obraNombre}</span></td>
       <td><span class="dt-truncate" style="max-width:110px;display:block">${banco}</span></td>
       <td class="right"><span class="dt-monto neg">− ${sym} ${montoFmt}</span></td>
-      <td><button onclick="event.stopPropagation();dtMarcarPagado(${m.id})" style="background:var(--green-pale);border:1px solid var(--green);border-radius:8px;padding:4px 10px;color:var(--green);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap">✓ Pagado</button></td>
+      <td><button onclick="event.stopPropagation();dtMarcarPagado('${m.id}')" style="background:var(--green-pale);border:1px solid var(--green);border-radius:8px;padding:4px 10px;color:var(--green);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap">✓ Pagado</button></td>
     </tr>`;
   }).join('');
 
